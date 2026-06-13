@@ -1,6 +1,12 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { getWarRoomData } from '@/lib/war-room/data';
 import { BattleCard } from '@/components/battles/BattleCard';
+
+function WRCrest({ src, name }: { src: string | null; name: string }) {
+  if (!src) return <span className="inline-block h-5 w-5 shrink-0 rounded-sm bg-gray-100 dark:bg-gray-700" />;
+  return <Image src={src} alt={name} width={20} height={20} className="shrink-0 object-contain" unoptimized />;
+}
 
 export default async function WarRoomPage() {
   const { leader, topFive, upcomingFixtures, recentResults, upcomingBattles, recentBattles } =
@@ -93,10 +99,12 @@ export default async function WarRoomPage() {
               <ul className="space-y-2.5">
                 {upcomingFixtures.map((f) => (
                   <li key={f.id} className="flex items-center justify-between gap-4">
-                    <span className="font-medium text-gray-900 dark:text-white">
-                      {f.homeTeam.name}{' '}
-                      <span className="font-normal text-gray-400">vs</span>{' '}
-                      {f.awayTeam.name}
+                    <span className="flex min-w-0 items-center gap-2 font-medium text-gray-900 dark:text-white">
+                      <WRCrest src={f.homeTeam.crest} name={f.homeTeam.name} />
+                      <span className="truncate">{f.homeTeam.name}</span>
+                      <span className="shrink-0 font-normal text-gray-400">vs</span>
+                      <span className="truncate">{f.awayTeam.name}</span>
+                      <WRCrest src={f.awayTeam.crest} name={f.awayTeam.name} />
                     </span>
                     <span className="shrink-0 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400">
                       {new Date(f.utcDate).toLocaleDateString('en-GB', {
@@ -127,11 +135,17 @@ export default async function WarRoomPage() {
               <ul className="space-y-2.5">
                 {recentResults.map((f) => (
                   <li key={f.id} className="flex items-center justify-between gap-3 text-sm">
-                    <span className="truncate text-gray-700 dark:text-gray-300">{f.homeTeam.name}</span>
+                    <span className="flex min-w-0 items-center gap-1.5 text-gray-700 dark:text-gray-300">
+                      <WRCrest src={f.homeTeam.crest} name={f.homeTeam.name} />
+                      <span className="truncate">{f.homeTeam.name}</span>
+                    </span>
                     <span className="shrink-0 rounded bg-sky-100 px-2 py-0.5 font-bold text-sky-800 dark:bg-sky-900/40 dark:text-sky-300">
                       {f.score.fullTime.home}–{f.score.fullTime.away}
                     </span>
-                    <span className="truncate text-right text-gray-700 dark:text-gray-300">{f.awayTeam.name}</span>
+                    <span className="flex min-w-0 items-center justify-end gap-1.5 text-right text-gray-700 dark:text-gray-300">
+                      <span className="truncate">{f.awayTeam.name}</span>
+                      <WRCrest src={f.awayTeam.crest} name={f.awayTeam.name} />
+                    </span>
                   </li>
                 ))}
               </ul>

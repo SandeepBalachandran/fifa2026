@@ -12,6 +12,8 @@ export function detectBattle(fixture: Fixture, ownership: OwnershipMap): DirectB
     matchId: fixture.id,
     homeTeam: fixture.homeTeam.name,
     awayTeam: fixture.awayTeam.name,
+    homeCrest: fixture.homeTeam.crest,
+    awayCrest: fixture.awayTeam.crest,
     homeOwner,
     awayOwner,
     status: 'SCHEDULED',

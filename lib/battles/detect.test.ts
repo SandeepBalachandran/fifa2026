@@ -5,8 +5,8 @@ import type { Fixture } from '../football-data/types';
 const fixture: Fixture = {
   id: 'match-1',
   matchday: 1,
-  homeTeam: { id: 'team-bra', name: 'Brazil' },
-  awayTeam: { id: 'team-arg', name: 'Argentina' },
+  homeTeam: { id: 'team-bra', name: 'Brazil', crest: null },
+  awayTeam: { id: 'team-arg', name: 'Argentina', crest: null },
   utcDate: '2026-06-15T18:00:00Z',
   status: 'SCHEDULED',
   stage: 'GROUP_STAGE',

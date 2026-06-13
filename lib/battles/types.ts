@@ -5,6 +5,8 @@ export interface DirectBattle {
   matchId: string;
   homeTeam: string;
   awayTeam: string;
+  homeCrest?: string | null;
+  awayCrest?: string | null;
   homeOwner: string;
   awayOwner: string;
   status: BattleStatus;

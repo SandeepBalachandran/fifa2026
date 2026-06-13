@@ -1,4 +1,10 @@
+import Image from 'next/image';
 import type { DirectBattle } from '@/lib/battles/types';
+
+function BattleCrest({ src, name }: { src: string | null | undefined; name: string }) {
+  if (!src) return <span className="mx-auto mb-1 block h-8 w-8 shrink-0 rounded-full bg-gray-100 dark:bg-gray-700" />;
+  return <Image src={src} alt={name} width={32} height={32} className="mx-auto mb-1 block object-contain" unoptimized />;
+}
 
 const OUTCOME_LABEL: Record<string, string> = {
   HOME_WIN: 'Home Win',
@@ -43,6 +49,7 @@ export function BattleCard({ battle }: { battle: DirectBattle }) {
 
       <div className="flex items-center justify-between gap-3">
         <div className="flex-1 text-center">
+          <BattleCrest src={battle.homeCrest} name={battle.homeTeam} />
           <p className="font-bold text-gray-900 dark:text-white">{battle.homeTeam}</p>
           <p className="mt-0.5 text-xs font-medium text-gray-500 dark:text-gray-400">
             {battle.homeOwner}
@@ -60,6 +67,7 @@ export function BattleCard({ battle }: { battle: DirectBattle }) {
         </div>
 
         <div className="flex-1 text-center">
+          <BattleCrest src={battle.awayCrest} name={battle.awayTeam} />
           <p className="font-bold text-gray-900 dark:text-white">{battle.awayTeam}</p>
           <p className="mt-0.5 text-xs font-medium text-gray-500 dark:text-gray-400">
             {battle.awayOwner}

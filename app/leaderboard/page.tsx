@@ -1,7 +1,13 @@
+import Image from 'next/image';
 import { readStore } from '@/lib/store';
 import { buildLeaderboard } from '@/lib/leaderboard/calculate';
 import { fetchStandings } from '@/lib/football-data/client';
 import type { GroupStanding, StandingEntry } from '@/lib/football-data/types';
+
+function Crest({ src, name, size = 22 }: { src: string | null; name: string; size?: number }) {
+  if (!src) return <span className="inline-block shrink-0 rounded-sm bg-gray-100 dark:bg-gray-700" style={{ width: size, height: size }} />;
+  return <Image src={src} alt={name} width={size} height={size} className="shrink-0 object-contain" unoptimized />;
+}
 
 const RANK_ICON: Record<string, string> = { UP: '▲', DOWN: '▼', UNCHANGED: '–' };
 const RANK_COLOR: Record<string, string> = {
@@ -64,12 +70,15 @@ function StandingsTable({
             >
               <td className="px-4 py-2.5 font-bold text-gray-400">{row.position}</td>
               <td className="px-4 py-2.5">
-                <span className="font-semibold text-gray-900 dark:text-white">{row.team.name}</span>
-                {isOwned && (
-                  <span className="ml-2 rounded-full bg-blue-100 px-2 py-0.5 text-xs font-semibold text-blue-700 dark:bg-blue-900/50 dark:text-blue-300">
-                    {owner}
-                  </span>
-                )}
+                <div className="flex items-center gap-2">
+                  <Crest src={row.team.crest} name={row.team.name} />
+                  <span className="font-semibold text-gray-900 dark:text-white">{row.team.name}</span>
+                  {isOwned && (
+                    <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-semibold text-blue-700 dark:bg-blue-900/50 dark:text-blue-300">
+                      {owner}
+                    </span>
+                  )}
+                </div>
               </td>
               <td className="px-3 py-2.5 text-right text-gray-500">{row.playedGames}</td>
               <td className="px-3 py-2.5 text-right font-medium text-emerald-600 dark:text-emerald-400">{row.won}</td>
@@ -125,12 +134,15 @@ function GroupCard({
                 }`}
               >
                 <td className="px-3 py-2">
-                  <span className="font-semibold text-gray-900 dark:text-white">
-                    {row.position}. {row.team.shortName || row.team.name}
-                  </span>
-                  {isOwned && (
-                    <span className="ml-1.5 text-blue-600 dark:text-blue-400">({owner})</span>
-                  )}
+                  <div className="flex items-center gap-1.5">
+                    <Crest src={row.team.crest} name={row.team.name} size={18} />
+                    <span className="font-semibold text-gray-900 dark:text-white">
+                      {row.position}. {row.team.shortName || row.team.name}
+                    </span>
+                    {isOwned && (
+                      <span className="text-blue-600 dark:text-blue-400">({owner})</span>
+                    )}
+                  </div>
                 </td>
                 <td className="px-2 py-2 text-right text-gray-500">{row.playedGames}</td>
                 <td className="px-2 py-2 text-right font-medium text-emerald-600">{row.won}</td>

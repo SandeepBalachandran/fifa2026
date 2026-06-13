@@ -14,6 +14,7 @@ interface ApiTeam {
   name: string;
   shortName: string;
   tla: string;
+  crest: string | null;
 }
 
 interface ApiMatch {
@@ -33,8 +34,8 @@ function mapMatch(m: ApiMatch): Fixture {
   return {
     id: String(m.id),
     matchday: m.matchday ?? null,
-    homeTeam: { id: String(m.homeTeam.id), name: m.homeTeam.name },
-    awayTeam: { id: String(m.awayTeam.id), name: m.awayTeam.name },
+    homeTeam: { id: String(m.homeTeam.id), name: m.homeTeam.name, crest: m.homeTeam.crest ?? null },
+    awayTeam: { id: String(m.awayTeam.id), name: m.awayTeam.name, crest: m.awayTeam.crest ?? null },
     utcDate: m.utcDate,
     status: m.status as MatchStatus,
     stage: m.stage as MatchStage,
@@ -64,6 +65,7 @@ interface ApiStandingTeam {
   name: string;
   shortName: string;
   tla: string;
+  crest: string | null;
 }
 
 interface ApiStandingEntry {
@@ -94,6 +96,7 @@ function mapStandingEntry(e: ApiStandingEntry): StandingEntry {
       name: e.team.name,
       shortName: e.team.shortName,
       tla: e.team.tla,
+      crest: e.team.crest ?? null,
     },
     playedGames: e.playedGames,
     won: e.won,

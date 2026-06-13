@@ -1,5 +1,11 @@
+import Image from 'next/image';
 import type { Fixture } from '@/lib/football-data/types';
 import type { DirectBattle } from '@/lib/battles/types';
+
+function TeamCrest({ crest, name, size = 28 }: { crest: string | null; name: string; size?: number }) {
+  if (!crest) return <span className="inline-block shrink-0 rounded-full bg-gray-100 dark:bg-gray-700" style={{ width: size, height: size }} />;
+  return <Image src={crest} alt={name} width={size} height={size} className="shrink-0 object-contain" unoptimized />;
+}
 
 interface FixtureCardProps {
   fixture: Fixture;
@@ -55,15 +61,20 @@ export function FixtureCard({ fixture, battle, ownership = {} }: Readonly<Fixtur
 
       {/* Teams + score */}
       <div className="flex items-center gap-3">
-        <div className="flex-1">
-          <p className={`font-bold ${isLive ? 'text-red-600 dark:text-red-400' : 'text-gray-900 dark:text-white'}`}>
-            {fixture.homeTeam.name}
-          </p>
-          {homeOwner && (
-            <p className="mt-0.5 text-xs font-medium text-blue-600 dark:text-blue-400">{homeOwner}</p>
-          )}
+        {/* Home team */}
+        <div className="flex flex-1 items-center gap-2">
+          <TeamCrest crest={fixture.homeTeam.crest} name={fixture.homeTeam.name} />
+          <div>
+            <p className={`font-bold leading-tight ${isLive ? 'text-red-600 dark:text-red-400' : 'text-gray-900 dark:text-white'}`}>
+              {fixture.homeTeam.name}
+            </p>
+            {homeOwner && (
+              <p className="text-xs font-medium text-blue-600 dark:text-blue-400">{homeOwner}</p>
+            )}
+          </div>
         </div>
 
+        {/* Score / vs */}
         <div className="shrink-0 text-center">
           {(isFinished || isLive) && home !== null && away !== null ? (
             <span className={`text-xl font-black tabular-nums ${isLive ? 'text-red-600 dark:text-red-400' : 'text-gray-900 dark:text-white'}`}>
@@ -74,13 +85,17 @@ export function FixtureCard({ fixture, battle, ownership = {} }: Readonly<Fixtur
           )}
         </div>
 
-        <div className="flex-1 text-right">
-          <p className={`font-bold ${isLive ? 'text-red-600 dark:text-red-400' : 'text-gray-900 dark:text-white'}`}>
-            {fixture.awayTeam.name}
-          </p>
-          {awayOwner && (
-            <p className="mt-0.5 text-xs font-medium text-blue-600 dark:text-blue-400">{awayOwner}</p>
-          )}
+        {/* Away team */}
+        <div className="flex flex-1 items-center justify-end gap-2">
+          <div className="text-right">
+            <p className={`font-bold leading-tight ${isLive ? 'text-red-600 dark:text-red-400' : 'text-gray-900 dark:text-white'}`}>
+              {fixture.awayTeam.name}
+            </p>
+            {awayOwner && (
+              <p className="text-xs font-medium text-blue-600 dark:text-blue-400">{awayOwner}</p>
+            )}
+          </div>
+          <TeamCrest crest={fixture.awayTeam.crest} name={fixture.awayTeam.name} />
         </div>
       </div>
 

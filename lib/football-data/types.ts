@@ -10,8 +10,8 @@ export type MatchStage =
 export interface Fixture {
   id: string;
   matchday: number | null;
-  homeTeam: { id: string; name: string };
-  awayTeam: { id: string; name: string };
+  homeTeam: { id: string; name: string; crest: string | null };
+  awayTeam: { id: string; name: string; crest: string | null };
   utcDate: string;
   status: MatchStatus;
   stage: MatchStage;
@@ -25,7 +25,7 @@ export type OwnershipMap = Record<string, string>;
 
 export interface StandingEntry {
   position: number;
-  team: { id: string; name: string; shortName: string; tla: string };
+  team: { id: string; name: string; shortName: string; tla: string; crest: string | null };
   playedGames: number;
   won: number;
   draw: number;
