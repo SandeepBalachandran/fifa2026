@@ -1,0 +1,4 @@
+{
+  "extends": "./tsconfig.json",
+  "exclude": ["node_modules", "lib/battles/detect.test.ts", "vitest.config.ts"]
+}

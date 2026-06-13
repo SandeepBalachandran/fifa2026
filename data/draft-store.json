@@ -1,0 +1,22 @@
+{
+  "participants": [],
+  "ownership": {},
+  "eliminated": [],
+  "scores": {},
+  "previousRanks": {},
+  "notifications": [],
+  "battles": {},
+  "scoringRules": {
+    "win": 3,
+    "draw": 1,
+    "loss": 0,
+    "cleanSheet": 1,
+    "groupStageQualification": 5,
+    "roundOf16": 5,
+    "quarterFinal": 8,
+    "semiFinal": 10,
+    "runnerUp": 10,
+    "champion": 15
+  },
+  "fixtures": []
+}

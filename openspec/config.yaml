@@ -1,20 +1,44 @@
 schema: spec-driven
 
-# Project context (optional)
-# This is shown to AI when creating artifacts.
-# Add your tech stack, conventions, style guides, domain knowledge, etc.
-# Example:
-#   context: |
-#     Tech stack: TypeScript, React, Node.js
-#     We use conventional commits
-#     Domain: e-commerce platform
+context: |
+  Project: World Cup Draft Manager
+  Domain: Fantasy-style football competition platform — participants draft national teams before the FIFA World Cup and earn points based on real tournament outcomes.
 
-# Per-artifact rules (optional)
-# Add custom rules for specific artifacts.
-# Example:
-#   rules:
-#     proposal:
-#       - Keep proposals under 500 words
-#       - Always include a "Non-goals" section
-#     tasks:
-#       - Break tasks into chunks of max 2 hours
+  Tech stack:
+  - Next.js 16 (App Router, server components by default)
+  - React 19
+  - TypeScript
+  - Tailwind CSS v4
+  - External: Football Data API (live match data, fixtures, standings, results)
+
+  Architecture:
+  - Data is always live — no hardcoded fixtures, standings, or results
+  - All match data originates from Football Data API
+  - See docs/architecture.md and docs/decomposition.md for full context
+  - See docs/adr/ for key decisions
+
+  Core capabilities (each has a spec in openspec/specs/):
+  - team-drafting: ownership assignment, draft lock, admin override
+  - match-tracking: live fixtures, results, competition progress from API
+  - scoring: points calculation, bonuses, leaderboard recalculation
+  - leaderboard: rankings, score deltas, teams-remaining counts
+  - direct-battles: detection and surfacing of head-to-head owned-team matchups
+  - notifications: automatic event-based notification generation
+  - war-room: central tournament dashboard
+
+  Conventions:
+  - Server components for data fetching; client components only for interactivity
+  - All scoring and sync logic runs server-side
+  - No manual data entry — everything is API-driven
+
+rules:
+  proposal:
+    - Reference the relevant capability spec(s) from openspec/specs/
+    - State which Football Data API endpoints are involved (if any)
+  specs:
+    - Use WHEN/THEN/AND scenario format
+    - Each scenario must be independently testable
+    - Distinguish between automatic (system-triggered) and manual (user-triggered) behaviors
+  tasks:
+    - Break tasks into units of ≤ 2 hours each
+    - Data-fetching tasks must reference the specific API endpoint
