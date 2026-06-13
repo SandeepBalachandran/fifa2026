@@ -13,4 +13,5 @@ export interface BetMatchRecord {
   winner: string | null;
   winnerOwner: 'Sandy' | 'Rahul' | null;
   amount: number;
+  nobet: boolean; // true when both teams belong to the same owner
 }

@@ -3,15 +3,44 @@ import Image from 'next/image';
 import { getWarRoomData } from '@/lib/war-room/data';
 import { BattleCard } from '@/components/battles/BattleCard';
 import { getBetLabel } from '@/lib/bet-tracker/config';
+import { fetchFixtures, fetchStandings } from '@/lib/football-data/client';
+import { calculateBetStats } from '@/lib/bet-tracker/calculate';
+import type { Fixture, StandingEntry } from '@/lib/football-data/types';
 
-function WRCrest({ src, name }: { src: string | null; name: string }) {
-  if (!src) return <span className="inline-block h-5 w-5 shrink-0 rounded-sm bg-gray-100 dark:bg-gray-700" />;
-  return <Image src={src} alt={name} width={20} height={20} className="shrink-0 object-contain" unoptimized />;
+function WRCrest({ src, name, size = 18 }: { src: string | null; name: string; size?: number }) {
+  if (!src) return <span className="inline-block shrink-0 rounded-sm bg-gray-100 dark:bg-gray-700" style={{ width: size, height: size }} />;
+  return <Image src={src} alt={name} width={size} height={size} className="shrink-0 object-contain" unoptimized />;
+}
+
+function BetLabel({ name }: { name: string }) {
+  const label = getBetLabel(name);
+  if (!label) return null;
+  return <span className="shrink-0 text-xs font-bold text-amber-500 dark:text-amber-400">{label}</span>;
 }
 
 export default async function WarRoomPage() {
-  const { leader, topFive, upcomingFixtures, recentResults, upcomingBattles, recentBattles } =
-    await getWarRoomData();
+  const [warRoomData, allFixtures, standings] = await Promise.all([
+    getWarRoomData(),
+    fetchFixtures().catch((): Fixture[] => []),
+    fetchStandings(2026).catch(() => []),
+  ]);
+
+  const { leader, topFive, upcomingFixtures, recentResults, upcomingBattles, recentBattles } = warRoomData;
+  const { sandy, rahul } = calculateBetStats(allFixtures);
+
+  const betLeader =
+    sandy.wins > rahul.wins ? { name: 'Sandy', wins: sandy.wins, amount: sandy.amount } :
+    rahul.wins > sandy.wins ? { name: 'Rahul', wins: rahul.wins, amount: rahul.amount } :
+    null;
+
+  const topWcTeams: StandingEntry[] = standings
+    .flatMap((g) => g.table)
+    .sort((a, b) =>
+      b.points - a.points ||
+      b.goalDifference - a.goalDifference ||
+      b.goalsFor - a.goalsFor
+    )
+    .slice(0, 5);
 
   return (
     <main className="mx-auto w-full max-w-5xl px-4 py-8">
@@ -42,6 +71,23 @@ export default async function WarRoomPage() {
             ) : (
               <p className="text-sm text-gray-400">No data yet.</p>
             )}
+
+            {/* Bet Leader */}
+            <div className="mt-4 border-t border-gray-100 pt-4 dark:border-gray-800">
+              <p className="mb-1.5 text-xs font-bold uppercase tracking-widest text-gray-400">
+                🎯 Bet Leader
+              </p>
+              {betLeader ? (
+                <>
+                  <p className="text-xl font-black text-gray-900 dark:text-white">{betLeader.name}</p>
+                  <p className="text-sm text-gray-500">{betLeader.wins} wins · ₹{betLeader.amount}</p>
+                </>
+              ) : sandy.wins === 0 && rahul.wins === 0 ? (
+                <p className="text-sm text-gray-400">No bets won yet.</p>
+              ) : (
+                <p className="text-sm font-semibold text-gray-500">Tied — {sandy.wins} wins each 🤝</p>
+              )}
+            </div>
           </div>
         </section>
 
@@ -56,6 +102,7 @@ export default async function WarRoomPage() {
             </Link>
           </div>
           <div className="bg-white dark:bg-gray-900">
+            {/* Draft Standings */}
             {topFive.length === 0 ? (
               <p className="px-5 py-4 text-sm text-gray-400">No participants yet.</p>
             ) : (
@@ -80,10 +127,41 @@ export default async function WarRoomPage() {
                 </tbody>
               </table>
             )}
+
+            {/* Top 5 WC Teams */}
+            {topWcTeams.length > 0 && (
+              <div className="border-t border-gray-100 px-5 py-4 dark:border-gray-800">
+                <p className="mb-3 text-xs font-bold uppercase tracking-widest text-gray-400">
+                  🌍 Top 5 WC Teams
+                </p>
+                <table className="w-full text-xs">
+                  <tbody>
+                    {topWcTeams.map((entry, i) => (
+                      <tr key={entry.team.id} className="border-b border-gray-50 last:border-0 dark:border-gray-800">
+                        <td className="py-1.5 pr-2 font-bold text-gray-400">{i + 1}</td>
+                        <td className="py-1.5">
+                          <div className="flex items-center gap-1.5">
+                            <WRCrest src={entry.team.crest} name={entry.team.name} size={16} />
+                            <span className="font-semibold text-gray-800 dark:text-gray-200">
+                              {entry.team.shortName || entry.team.name}
+                            </span>
+                            <BetLabel name={entry.team.name} />
+                          </div>
+                        </td>
+                        <td className="py-1.5 text-right font-black text-gray-900 dark:text-white">{entry.points}</td>
+                        <td className="py-1.5 pl-3 text-right text-gray-400">
+                          {entry.goalDifference > 0 ? `+${entry.goalDifference}` : entry.goalDifference}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         </section>
 
-        {/* ── Upcoming Fixtures ── */}
+        {/* ── Upcoming Fixtures — tiny cards ── */}
         <section className="col-span-1 overflow-hidden rounded-2xl shadow-lg lg:col-span-2">
           <div className="flex items-center justify-between bg-linear-to-r from-emerald-600 to-green-600 px-5 py-4">
             <p className="text-xs font-bold uppercase tracking-widest text-emerald-100">
@@ -93,64 +171,79 @@ export default async function WarRoomPage() {
               All fixtures →
             </Link>
           </div>
-          <div className="bg-white px-5 py-4 dark:bg-gray-900">
+          <div className="bg-white px-4 py-4 dark:bg-gray-900">
             {upcomingFixtures.length === 0 ? (
               <p className="text-sm text-gray-400">No upcoming fixtures.</p>
             ) : (
-              <ul className="space-y-2.5">
+              <div className="grid grid-cols-2 gap-2">
                 {upcomingFixtures.map((f) => (
-                  <li key={f.id} className="flex items-center justify-between gap-4">
-                    <span className="flex min-w-0 items-center gap-2 font-medium text-gray-900 dark:text-white">
+                  <div
+                    key={f.id}
+                    className="rounded-xl border border-gray-100 bg-gray-50 px-3 py-2.5 dark:border-gray-800 dark:bg-gray-800/40"
+                  >
+                    <p className="mb-2 text-center text-xs text-gray-400">
+                      {new Date(f.utcDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
+                      {' · '}
+                      {new Date(f.utcDate).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
+                    </p>
+                    <div className="flex items-center gap-1.5">
                       <WRCrest src={f.homeTeam.crest} name={f.homeTeam.name} />
-                      <span className="truncate">{f.homeTeam.name}</span>
-                      {getBetLabel(f.homeTeam.name) && <span className="shrink-0 text-xs font-medium text-amber-500">{getBetLabel(f.homeTeam.name)}</span>}
-                      <span className="shrink-0 font-normal text-gray-400">vs</span>
-                      <span className="truncate">{f.awayTeam.name}</span>
-                      {getBetLabel(f.awayTeam.name) && <span className="shrink-0 text-xs font-medium text-amber-500">{getBetLabel(f.awayTeam.name)}</span>}
+                      <span className="min-w-0 flex-1 truncate text-xs font-semibold text-gray-800 dark:text-gray-200">
+                        {f.homeTeam.name}
+                      </span>
+                      <BetLabel name={f.homeTeam.name} />
+                    </div>
+                    <p className="my-1 text-center text-xs font-medium text-gray-400">vs</p>
+                    <div className="flex items-center gap-1.5">
                       <WRCrest src={f.awayTeam.crest} name={f.awayTeam.name} />
-                    </span>
-                    <span className="shrink-0 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400">
-                      {new Date(f.utcDate).toLocaleDateString('en-GB', {
-                        day: 'numeric',
-                        month: 'short',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      })}
-                    </span>
-                  </li>
+                      <span className="min-w-0 flex-1 truncate text-xs font-semibold text-gray-800 dark:text-gray-200">
+                        {f.awayTeam.name}
+                      </span>
+                      <BetLabel name={f.awayTeam.name} />
+                    </div>
+                  </div>
                 ))}
-              </ul>
+              </div>
             )}
           </div>
         </section>
 
-        {/* ── Recent Results ── */}
+        {/* ── Recent Results — 2-line stacked ── */}
         <section className="col-span-1 overflow-hidden rounded-2xl shadow-lg">
           <div className="bg-linear-to-br from-sky-500 to-cyan-600 px-5 py-4">
             <p className="text-xs font-bold uppercase tracking-widest text-sky-100">
               🏁 Recent Results
             </p>
           </div>
-          <div className="bg-white px-5 py-4 dark:bg-gray-900">
+          <div className="bg-white px-4 py-4 dark:bg-gray-900">
             {recentResults.length === 0 ? (
               <p className="text-sm text-gray-400">No results yet.</p>
             ) : (
-              <ul className="space-y-2.5">
+              <ul className="space-y-2">
                 {recentResults.map((f) => (
-                  <li key={f.id} className="flex items-center justify-between gap-3 text-sm">
-                    <span className="flex min-w-0 items-center gap-1.5 text-gray-700 dark:text-gray-300">
-                      <WRCrest src={f.homeTeam.crest} name={f.homeTeam.name} />
-                      <span className="truncate">{f.homeTeam.name}</span>
-                      {getBetLabel(f.homeTeam.name) && <span className="shrink-0 text-xs font-medium text-amber-500">{getBetLabel(f.homeTeam.name)}</span>}
-                    </span>
-                    <span className="shrink-0 rounded bg-sky-100 px-2 py-0.5 font-bold text-sky-800 dark:bg-sky-900/40 dark:text-sky-300">
-                      {f.score.fullTime.home}–{f.score.fullTime.away}
-                    </span>
-                    <span className="flex min-w-0 items-center justify-end gap-1.5 text-right text-gray-700 dark:text-gray-300">
-                      {getBetLabel(f.awayTeam.name) && <span className="shrink-0 text-xs font-medium text-amber-500">{getBetLabel(f.awayTeam.name)}</span>}
-                      <span className="truncate">{f.awayTeam.name}</span>
-                      <WRCrest src={f.awayTeam.crest} name={f.awayTeam.name} />
-                    </span>
+                  <li
+                    key={f.id}
+                    className="rounded-xl border border-sky-100 bg-sky-50/60 px-3 py-2.5 dark:border-sky-900/30 dark:bg-sky-950/20"
+                  >
+                    <div className="flex items-center gap-1.5">
+                      <WRCrest src={f.homeTeam.crest} name={f.homeTeam.name} size={16} />
+                      <span className="min-w-0 flex-1 truncate text-xs font-semibold text-gray-800 dark:text-gray-200">
+                        {f.homeTeam.name}
+                      </span>
+                      <BetLabel name={f.homeTeam.name} />
+                    </div>
+                    <div className="my-1.5 text-center">
+                      <span className="rounded bg-sky-100 px-3 py-0.5 text-sm font-black tabular-nums text-sky-800 dark:bg-sky-900/40 dark:text-sky-300">
+                        {f.score.fullTime.home} – {f.score.fullTime.away}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <WRCrest src={f.awayTeam.crest} name={f.awayTeam.name} size={16} />
+                      <span className="min-w-0 flex-1 truncate text-xs font-semibold text-gray-800 dark:text-gray-200">
+                        {f.awayTeam.name}
+                      </span>
+                      <BetLabel name={f.awayTeam.name} />
+                    </div>
                   </li>
                 ))}
               </ul>

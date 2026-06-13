@@ -27,19 +27,24 @@ export function calculateBetStats(fixtures: Fixture[]): BetResult {
     const awayOwner = BET_OWNERSHIP[f.awayTeam.name] ?? null;
     if (!homeOwner && !awayOwner) continue;
 
+    // Option A: same-owner match → no bet, no points
+    const nobet = homeOwner !== null && homeOwner === awayOwner;
+
     let winner: string | null = null;
     let winnerOwner: 'Sandy' | 'Rahul' | null = null;
 
     if (home > away) {
       winner = f.homeTeam.name;
-      winnerOwner = homeOwner;
+      winnerOwner = nobet ? null : homeOwner;
     } else if (away > home) {
       winner = f.awayTeam.name;
-      winnerOwner = awayOwner;
+      winnerOwner = nobet ? null : awayOwner;
     }
 
-    if (winnerOwner === 'Sandy') sandyWins++;
-    else if (winnerOwner === 'Rahul') rahulWins++;
+    if (!nobet) {
+      if (winnerOwner === 'Sandy') sandyWins++;
+      else if (winnerOwner === 'Rahul') rahulWins++;
+    }
 
     history.push({
       matchId: f.id,
@@ -51,6 +56,7 @@ export function calculateBetStats(fixtures: Fixture[]): BetResult {
       winner,
       winnerOwner,
       amount: winnerOwner ? AMOUNT_PER_WIN : 0,
+      nobet,
     });
   }
 

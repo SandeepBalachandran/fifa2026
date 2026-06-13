@@ -116,7 +116,11 @@ function HistoryRow({ record }: { record: BetMatchRecord }) {
         )}
       </td>
       <td className="px-4 py-3 text-sm">
-        {record.winnerOwner ? (
+        {record.nobet ? (
+          <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-400 dark:bg-gray-800">
+            same owner
+          </span>
+        ) : record.winnerOwner ? (
           <span className={`font-bold ${record.winnerOwner === 'Sandy' ? 'text-emerald-600 dark:text-emerald-400' : 'text-blue-600 dark:text-blue-400'}`}>
             {record.winnerOwner}
           </span>
@@ -125,7 +129,9 @@ function HistoryRow({ record }: { record: BetMatchRecord }) {
         )}
       </td>
       <td className="px-4 py-3 text-sm">
-        {record.amount > 0 ? (
+        {record.nobet ? (
+          <span className="text-gray-300 dark:text-gray-600">no bet</span>
+        ) : record.amount > 0 ? (
           <span className="font-bold text-amber-600 dark:text-amber-400">+₹{record.amount}</span>
         ) : (
           <span className="text-gray-400">—</span>
