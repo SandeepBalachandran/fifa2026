@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import type { Fixture } from '@/lib/football-data/types';
 import type { DirectBattle } from '@/lib/battles/types';
+import { getBetLabel } from '@/lib/bet-tracker/config';
 
 function TeamCrest({ crest, name, size = 28 }: { crest: string | null; name: string; size?: number }) {
   if (!crest) return <span className="inline-block shrink-0 rounded-full bg-gray-100 dark:bg-gray-700" style={{ width: size, height: size }} />;
@@ -32,6 +33,8 @@ export function FixtureCard({ fixture, battle, ownership = {} }: Readonly<Fixtur
 
   const homeOwner = battle?.homeOwner ?? ownership[fixture.homeTeam.name] ?? null;
   const awayOwner = battle?.awayOwner ?? ownership[fixture.awayTeam.name] ?? null;
+  const homeBetLabel = getBetLabel(fixture.homeTeam.name);
+  const awayBetLabel = getBetLabel(fixture.awayTeam.name);
   const { home, away } = fixture.score.fullTime;
 
   const cardClass = battle
@@ -67,6 +70,7 @@ export function FixtureCard({ fixture, battle, ownership = {} }: Readonly<Fixtur
           <div>
             <p className={`font-bold leading-tight ${isLive ? 'text-red-600 dark:text-red-400' : 'text-gray-900 dark:text-white'}`}>
               {fixture.homeTeam.name}
+              {homeBetLabel && <span className="ml-1 text-xs font-medium text-amber-500 dark:text-amber-400">{homeBetLabel}</span>}
             </p>
             {homeOwner && (
               <p className="text-xs font-medium text-blue-600 dark:text-blue-400">{homeOwner}</p>
@@ -90,6 +94,7 @@ export function FixtureCard({ fixture, battle, ownership = {} }: Readonly<Fixtur
           <div className="text-right">
             <p className={`font-bold leading-tight ${isLive ? 'text-red-600 dark:text-red-400' : 'text-gray-900 dark:text-white'}`}>
               {fixture.awayTeam.name}
+              {awayBetLabel && <span className="ml-1 text-xs font-medium text-amber-500 dark:text-amber-400">{awayBetLabel}</span>}
             </p>
             {awayOwner && (
               <p className="text-xs font-medium text-blue-600 dark:text-blue-400">{awayOwner}</p>

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { getWarRoomData } from '@/lib/war-room/data';
 import { BattleCard } from '@/components/battles/BattleCard';
+import { getBetLabel } from '@/lib/bet-tracker/config';
 
 function WRCrest({ src, name }: { src: string | null; name: string }) {
   if (!src) return <span className="inline-block h-5 w-5 shrink-0 rounded-sm bg-gray-100 dark:bg-gray-700" />;
@@ -102,8 +103,10 @@ export default async function WarRoomPage() {
                     <span className="flex min-w-0 items-center gap-2 font-medium text-gray-900 dark:text-white">
                       <WRCrest src={f.homeTeam.crest} name={f.homeTeam.name} />
                       <span className="truncate">{f.homeTeam.name}</span>
+                      {getBetLabel(f.homeTeam.name) && <span className="shrink-0 text-xs font-medium text-amber-500">{getBetLabel(f.homeTeam.name)}</span>}
                       <span className="shrink-0 font-normal text-gray-400">vs</span>
                       <span className="truncate">{f.awayTeam.name}</span>
+                      {getBetLabel(f.awayTeam.name) && <span className="shrink-0 text-xs font-medium text-amber-500">{getBetLabel(f.awayTeam.name)}</span>}
                       <WRCrest src={f.awayTeam.crest} name={f.awayTeam.name} />
                     </span>
                     <span className="shrink-0 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400">
@@ -138,11 +141,13 @@ export default async function WarRoomPage() {
                     <span className="flex min-w-0 items-center gap-1.5 text-gray-700 dark:text-gray-300">
                       <WRCrest src={f.homeTeam.crest} name={f.homeTeam.name} />
                       <span className="truncate">{f.homeTeam.name}</span>
+                      {getBetLabel(f.homeTeam.name) && <span className="shrink-0 text-xs font-medium text-amber-500">{getBetLabel(f.homeTeam.name)}</span>}
                     </span>
                     <span className="shrink-0 rounded bg-sky-100 px-2 py-0.5 font-bold text-sky-800 dark:bg-sky-900/40 dark:text-sky-300">
                       {f.score.fullTime.home}–{f.score.fullTime.away}
                     </span>
                     <span className="flex min-w-0 items-center justify-end gap-1.5 text-right text-gray-700 dark:text-gray-300">
+                      {getBetLabel(f.awayTeam.name) && <span className="shrink-0 text-xs font-medium text-amber-500">{getBetLabel(f.awayTeam.name)}</span>}
                       <span className="truncate">{f.awayTeam.name}</span>
                       <WRCrest src={f.awayTeam.crest} name={f.awayTeam.name} />
                     </span>

@@ -23,10 +23,11 @@ const NAV_LINKS = [
   { href: "/",              label: "War Room",      icon: "🏟" },
   { href: "/leaderboard",   label: "Leaderboard",   icon: "🏆" },
   { href: "/fixtures",      label: "Fixtures",      icon: "📅" },
-  { href: "/battles",       label: "Battles",       icon: "⚔️" },
-  { href: "/draft",         label: "Draft",         icon: "📋" },
-  { href: "/notifications", label: "Notifications", icon: "🔔" },
-  { href: "/admin",         label: "Admin",         icon: "⚙️" },
+  // { href: "/battles",       label: "Battles",       icon: "⚔️" },
+  // { href: "/draft",         label: "Draft",         icon: "📋" },
+  // { href: "/notifications", label: "Notifications", icon: "🔔" },
+  // { href: "/admin",         label: "Admin",         icon: "⚙️" },
+  { href: "/bet-tracker",   label: "Bet Tracker",   icon: "🎯" },
 ];
 
 export default function RootLayout({
