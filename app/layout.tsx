@@ -63,8 +63,8 @@ export default function RootLayout({
               </span>
             </Link>
 
-            {/* Nav links */}
-            <div className="flex items-center gap-0.5 overflow-x-auto">
+            {/* Desktop nav links + theme toggle */}
+            <div className="hidden items-center gap-0.5 sm:flex">
               {NAV_LINKS.map(({ href, label, icon }) => (
                 <Link
                   key={href}
@@ -72,20 +72,36 @@ export default function RootLayout({
                   className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-green-100 transition-all hover:bg-white/15 hover:text-white"
                 >
                   <span className="text-base leading-none">{icon}</span>
-                  <span className="hidden sm:inline">{label}</span>
+                  <span>{label}</span>
                 </Link>
               ))}
-
-              {/* Divider */}
               <div className="mx-2 h-5 w-px bg-white/20" />
+              <ThemeToggle />
+            </div>
 
-              {/* Theme toggle */}
+            {/* Mobile: theme toggle only */}
+            <div className="sm:hidden">
               <ThemeToggle />
             </div>
           </nav>
         </header>
 
-        <div className="flex flex-1 flex-col">{children}</div>
+        {/* Mobile bottom tab bar */}
+        <nav className="fixed bottom-0 left-0 right-0 z-50 flex border-t border-green-900/80 bg-green-950 sm:hidden">
+          {NAV_LINKS.map(({ href, label, icon }) => (
+            <Link
+              key={href}
+              href={href}
+              className="flex flex-1 flex-col items-center justify-center gap-0.5 py-3 text-green-400 transition-colors hover:text-white active:text-amber-400"
+            >
+              <span className="text-xl leading-none">{icon}</span>
+              <span className="text-[10px] font-semibold leading-none">{label}</span>
+            </Link>
+          ))}
+        </nav>
+
+        {/* pb-16 on mobile to clear the fixed bottom tab bar */}
+        <div className="flex flex-1 flex-col pb-16 sm:pb-0">{children}</div>
 
         {/* Footer */}
         <footer className="border-t border-green-200 bg-green-900/10 py-4 text-center text-xs text-green-700 dark:border-green-900/30 dark:text-green-500">
