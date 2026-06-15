@@ -23,6 +23,7 @@ const NAV_LINKS = [
   { href: "/",              label: "War Room",      icon: "🏟" },
   { href: "/leaderboard",   label: "Leaderboard",   icon: "🏆" },
   { href: "/fixtures",      label: "Fixtures",      icon: "📅" },
+  { href: "/scorers",       label: "Scorers",       icon: "⚽" },
   // { href: "/battles",       label: "Battles",       icon: "⚔️" },
   // { href: "/draft",         label: "Draft",         icon: "📋" },
   // { href: "/notifications", label: "Notifications", icon: "🔔" },

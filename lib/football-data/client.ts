@@ -1,4 +1,5 @@
 import type { Fixture, GroupStanding, MatchStage, MatchStatus, StandingEntry } from './types';
+import type { TopScorer } from './scorer-types';
 
 const BASE_URL = 'https://api.football-data.org/v4';
 const COMPETITION = 'WC';
@@ -27,7 +28,7 @@ interface ApiMatch {
   awayTeam: ApiTeam;
   score: {
     fullTime: { home: number | null; away: number | null };
-  };
+  } | null;
 }
 
 function mapMatch(m: ApiMatch): Fixture {
@@ -39,7 +40,7 @@ function mapMatch(m: ApiMatch): Fixture {
     utcDate: m.utcDate,
     status: m.status as MatchStatus,
     stage: m.stage as MatchStage,
-    score: { fullTime: m.score.fullTime },
+    score: { fullTime: m.score?.fullTime ?? { home: null, away: null } },
   };
 }
 
@@ -131,3 +132,23 @@ export async function fetchStandings(season?: number, matchday?: number): Promis
       table: s.table.map(mapStandingEntry),
     }));
 }
+
+export async function fetchScorers(limit = 50): Promise<TopScorer[]> {
+  const url = new URL(`${BASE_URL}/competitions/${COMPETITION}/scorers`);
+  url.searchParams.set('limit', String(limit));
+
+  const res = await fetch(url.toString(), {
+    headers: { 'X-Auth-Token': getApiKey() },
+    next: { revalidate: 300 },
+  });
+
+  if (!res.ok) {
+    throw new Error(`Football Data API error: ${res.status} ${res.statusText}`);
+  }
+
+  const data = (await res.json()) as { scorers: TopScorer[] };
+  return data.scorers;
+}
+
+export { mapMatch };
+export type { ApiMatch };
