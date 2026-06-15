@@ -65,15 +65,17 @@ export function FixtureCard({ fixture, battle, ownership = {} }: Readonly<Fixtur
       {/* Teams + score */}
       <div className="flex items-center gap-3">
         {/* Home team */}
-        <div className="flex flex-1 items-center gap-2">
+        <div className="flex min-w-0 flex-1 items-center gap-2">
           <TeamCrest crest={fixture.homeTeam.crest} name={fixture.homeTeam.name} />
-          <div>
-            <p className={`font-bold leading-tight ${isLive ? 'text-red-600 dark:text-red-400' : 'text-gray-900 dark:text-white'}`}>
-              {fixture.homeTeam.name}
-              {homeBetLabel && <span className="ml-1 text-xs font-medium text-amber-500 dark:text-amber-400">{homeBetLabel}</span>}
-            </p>
+          <div className="min-w-0">
+            <div className="flex min-w-0 items-baseline gap-1">
+              <p className={`truncate font-bold leading-tight ${isLive ? 'text-red-600 dark:text-red-400' : 'text-gray-900 dark:text-white'}`}>
+                {fixture.homeTeam.name}
+              </p>
+              {homeBetLabel && <span className="shrink-0 text-xs font-medium text-amber-500 dark:text-amber-400">{homeBetLabel}</span>}
+            </div>
             {homeOwner && (
-              <p className="text-xs font-medium text-blue-600 dark:text-blue-400">{homeOwner}</p>
+              <p className="truncate text-xs font-medium text-blue-600 dark:text-blue-400">{homeOwner}</p>
             )}
           </div>
         </div>
@@ -90,14 +92,16 @@ export function FixtureCard({ fixture, battle, ownership = {} }: Readonly<Fixtur
         </div>
 
         {/* Away team */}
-        <div className="flex flex-1 items-center justify-end gap-2">
-          <div className="text-right">
-            <p className={`font-bold leading-tight ${isLive ? 'text-red-600 dark:text-red-400' : 'text-gray-900 dark:text-white'}`}>
-              {fixture.awayTeam.name}
-              {awayBetLabel && <span className="ml-1 text-xs font-medium text-amber-500 dark:text-amber-400">{awayBetLabel}</span>}
-            </p>
+        <div className="flex min-w-0 flex-1 items-center justify-end gap-2">
+          <div className="min-w-0 text-right">
+            <div className="flex min-w-0 items-baseline justify-end gap-1">
+              {awayBetLabel && <span className="shrink-0 text-xs font-medium text-amber-500 dark:text-amber-400">{awayBetLabel}</span>}
+              <p className={`truncate font-bold leading-tight ${isLive ? 'text-red-600 dark:text-red-400' : 'text-gray-900 dark:text-white'}`}>
+                {fixture.awayTeam.name}
+              </p>
+            </div>
             {awayOwner && (
-              <p className="text-xs font-medium text-blue-600 dark:text-blue-400">{awayOwner}</p>
+              <p className="truncate text-xs font-medium text-blue-600 dark:text-blue-400">{awayOwner}</p>
             )}
           </div>
           <TeamCrest crest={fixture.awayTeam.crest} name={fixture.awayTeam.name} />

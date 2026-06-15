@@ -137,65 +137,69 @@ export default async function ScorersPage() {
           <OwnerTallyBar {...tally} />
 
           <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-900">
-            {/* Table header */}
-            <div className="grid grid-cols-[40px_1fr_80px_80px_80px_80px] items-center border-b border-gray-100 bg-gray-50 px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-400 dark:border-gray-800 dark:bg-gray-800/60">
-              <span>#</span>
-              <span>Player</span>
-              <span className="text-center">Goals</span>
-              <span className="text-center">Ast</span>
-              <span className="text-center">Pen</span>
-              <span className="text-center">MP</span>
-            </div>
-
-            {scorers.map((s, i) => {
-              const rank = i + 1;
-              const betLabel = getBetLabel(s.team.name);
-              const rowBg =
-                rank === 1 ? 'bg-amber-50 dark:bg-amber-950/30' :
-                rank === 2 ? 'bg-slate-50 dark:bg-slate-800/30' :
-                rank === 3 ? 'bg-orange-50 dark:bg-orange-950/20' :
-                'hover:bg-gray-50 dark:hover:bg-gray-800/40';
-
-              return (
-                <div
-                  key={`${s.player.id}-${i}`}
-                  className={`grid grid-cols-[40px_1fr_80px_80px_80px_80px] items-center border-b border-gray-50 px-4 py-3 last:border-0 dark:border-gray-800 ${rowBg}`}
-                >
-                  {/* Rank */}
-                  <div className="flex items-center">
-                    <RankBadge rank={rank} />
-                  </div>
-
-                  {/* Player + team */}
-                  <div className="min-w-0">
-                    <p className="truncate font-bold text-gray-900 dark:text-white">
-                      {s.player.name}
-                    </p>
-                    <div className="mt-0.5 flex items-center gap-1.5">
-                      <Crest src={s.team.crest} name={s.team.name} size={16} />
-                      <span className="truncate text-xs text-gray-500 dark:text-gray-400">
-                        {s.team.shortName || s.team.name}
-                      </span>
-                      {betLabel && (
-                        <span className="shrink-0 text-xs font-bold text-amber-500 dark:text-amber-400">
-                          {betLabel}
-                        </span>
-                      )}
-                      {s.player.nationality && (
-                        <span className="shrink-0 text-xs text-gray-400 dark:text-gray-500">
-                          · {s.player.nationality}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  <StatCell value={s.goals}     label="Goals" />
-                  <StatCell value={s.assists}   label="Ast"   />
-                  <StatCell value={s.penalties} label="Pen"   />
-                  <StatCell value={s.playedMatches} label="MP" />
+            <div className="overflow-x-auto">
+              <div className="min-w-[400px]">
+                {/* Table header */}
+                <div className="grid grid-cols-[36px_1fr_64px_64px_64px_64px] items-center border-b border-gray-100 bg-gray-50 px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-400 dark:border-gray-800 dark:bg-gray-800/60">
+                  <span>#</span>
+                  <span>Player</span>
+                  <span className="text-center">Goals</span>
+                  <span className="text-center">Ast</span>
+                  <span className="text-center">Pen</span>
+                  <span className="text-center">MP</span>
                 </div>
-              );
-            })}
+
+                {scorers.map((s, i) => {
+                  const rank = i + 1;
+                  const betLabel = getBetLabel(s.team.name);
+                  const rowBg =
+                    rank === 1 ? 'bg-amber-50 dark:bg-amber-950/30' :
+                    rank === 2 ? 'bg-slate-50 dark:bg-slate-800/30' :
+                    rank === 3 ? 'bg-orange-50 dark:bg-orange-950/20' :
+                    'hover:bg-gray-50 dark:hover:bg-gray-800/40';
+
+                  return (
+                    <div
+                      key={`${s.player.id}-${i}`}
+                      className={`grid grid-cols-[36px_1fr_64px_64px_64px_64px] items-center border-b border-gray-50 px-4 py-3 last:border-0 dark:border-gray-800 ${rowBg}`}
+                    >
+                      {/* Rank */}
+                      <div className="flex items-center">
+                        <RankBadge rank={rank} />
+                      </div>
+
+                      {/* Player + team */}
+                      <div className="min-w-0">
+                        <p className="truncate font-bold text-gray-900 dark:text-white">
+                          {s.player.name}
+                        </p>
+                        <div className="mt-0.5 flex items-center gap-1.5">
+                          <Crest src={s.team.crest} name={s.team.name} size={16} />
+                          <span className="truncate text-xs text-gray-500 dark:text-gray-400">
+                            {s.team.shortName || s.team.name}
+                          </span>
+                          {betLabel && (
+                            <span className="shrink-0 text-xs font-bold text-amber-500 dark:text-amber-400">
+                              {betLabel}
+                            </span>
+                          )}
+                          {s.player.nationality && (
+                            <span className="shrink-0 text-xs text-gray-400 dark:text-gray-500">
+                              · {s.player.nationality}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <StatCell value={s.goals}        label="Goals" />
+                      <StatCell value={s.assists}      label="Ast"   />
+                      <StatCell value={s.penalties}    label="Pen"   />
+                      <StatCell value={s.playedMatches} label="MP"   />
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           </div>
         </>
       )}

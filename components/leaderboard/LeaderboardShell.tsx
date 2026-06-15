@@ -65,71 +65,73 @@ function StandingsTable({
   onTeamClick: (teamId: string) => void;
 }) {
   return (
-    <table className="w-full text-sm">
-      <thead>
-        <tr className="border-b border-gray-100 text-right text-xs font-semibold uppercase tracking-wider text-gray-400 dark:border-gray-800">
-          <th className="px-4 py-3 text-left">#</th>
-          <th className="px-4 py-3 text-left">Team</th>
-          <th className="px-3 py-3">P</th>
-          <th className="px-3 py-3">W</th>
-          <th className="px-3 py-3">D</th>
-          <th className="px-3 py-3">L</th>
-          <th className="px-3 py-3">GF</th>
-          <th className="px-3 py-3">GA</th>
-          <th className="px-3 py-3">GD</th>
-          <th className="px-3 py-3 pr-4">Pts</th>
-        </tr>
-      </thead>
-      <tbody>
-        {rows.map((row) => {
-          const owner = ownership[row.team.name];
-          const isOwned = Boolean(owner);
-          return (
-            <tr
-              key={row.team.id}
-              className={`border-b border-gray-50 last:border-0 transition-colors dark:border-gray-800 ${
-                isOwned
-                  ? 'bg-blue-50 dark:bg-blue-950/30'
-                  : 'hover:bg-gray-50 dark:hover:bg-gray-800/50'
-              }`}
-            >
-              <td className="px-4 py-2.5 font-bold text-gray-400">{row.position}</td>
-              <td className="px-4 py-2.5">
-                <div className="flex items-center gap-2">
-                  <Crest src={row.team.crest} name={row.team.name} />
-                  <button
-                    onClick={() => onTeamClick(row.team.id)}
-                    className="font-semibold text-gray-900 hover:text-green-700 hover:underline dark:text-white dark:hover:text-green-400"
-                  >
-                    {row.team.name}
-                  </button>
-                  {getBetLabel(row.team.name) && (
-                    <span className="text-xs font-medium text-amber-500 dark:text-amber-400">
-                      {getBetLabel(row.team.name)}
-                    </span>
-                  )}
-                  {isOwned && (
-                    <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-semibold text-blue-700 dark:bg-blue-900/50 dark:text-blue-300">
-                      {owner}
-                    </span>
-                  )}
-                </div>
-              </td>
-              <td className="px-3 py-2.5 text-right text-gray-500">{row.playedGames}</td>
-              <td className="px-3 py-2.5 text-right font-medium text-emerald-600 dark:text-emerald-400">{row.won}</td>
-              <td className="px-3 py-2.5 text-right text-gray-500">{row.draw}</td>
-              <td className="px-3 py-2.5 text-right text-red-500">{row.lost}</td>
-              <td className="px-3 py-2.5 text-right text-gray-500">{row.goalsFor}</td>
-              <td className="px-3 py-2.5 text-right text-gray-500">{row.goalsAgainst}</td>
-              <td className="px-3 py-2.5 text-right font-medium text-gray-600 dark:text-gray-400">
-                {gdLabel(row.goalDifference)}
-              </td>
-              <td className="px-3 py-2.5 pr-4 text-right font-black text-gray-900 dark:text-white">{row.points}</td>
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
+    <div className="overflow-x-auto">
+      <table className="w-full min-w-[520px] text-sm">
+        <thead>
+          <tr className="border-b border-gray-100 text-right text-xs font-semibold uppercase tracking-wider text-gray-400 dark:border-gray-800">
+            <th className="px-4 py-3 text-left">#</th>
+            <th className="px-4 py-3 text-left">Team</th>
+            <th className="px-3 py-3">P</th>
+            <th className="px-3 py-3">W</th>
+            <th className="px-3 py-3">D</th>
+            <th className="px-3 py-3">L</th>
+            <th className="hidden px-3 py-3 sm:table-cell">GF</th>
+            <th className="hidden px-3 py-3 sm:table-cell">GA</th>
+            <th className="px-3 py-3">GD</th>
+            <th className="px-3 py-3 pr-4">Pts</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row) => {
+            const owner = ownership[row.team.name];
+            const isOwned = Boolean(owner);
+            return (
+              <tr
+                key={row.team.id}
+                className={`border-b border-gray-50 last:border-0 transition-colors dark:border-gray-800 ${
+                  isOwned
+                    ? 'bg-blue-50 dark:bg-blue-950/30'
+                    : 'hover:bg-gray-50 dark:hover:bg-gray-800/50'
+                }`}
+              >
+                <td className="px-4 py-2.5 font-bold text-gray-400">{row.position}</td>
+                <td className="px-4 py-2.5">
+                  <div className="flex items-center gap-2">
+                    <Crest src={row.team.crest} name={row.team.name} />
+                    <button
+                      onClick={() => onTeamClick(row.team.id)}
+                      className="font-semibold text-gray-900 hover:text-green-700 hover:underline dark:text-white dark:hover:text-green-400"
+                    >
+                      {row.team.name}
+                    </button>
+                    {getBetLabel(row.team.name) && (
+                      <span className="text-xs font-medium text-amber-500 dark:text-amber-400">
+                        {getBetLabel(row.team.name)}
+                      </span>
+                    )}
+                    {isOwned && (
+                      <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-semibold text-blue-700 dark:bg-blue-900/50 dark:text-blue-300">
+                        {owner}
+                      </span>
+                    )}
+                  </div>
+                </td>
+                <td className="px-3 py-2.5 text-right text-gray-500">{row.playedGames}</td>
+                <td className="px-3 py-2.5 text-right font-medium text-emerald-600 dark:text-emerald-400">{row.won}</td>
+                <td className="px-3 py-2.5 text-right text-gray-500">{row.draw}</td>
+                <td className="px-3 py-2.5 text-right text-red-500">{row.lost}</td>
+                <td className="hidden px-3 py-2.5 text-right text-gray-500 sm:table-cell">{row.goalsFor}</td>
+                <td className="hidden px-3 py-2.5 text-right text-gray-500 sm:table-cell">{row.goalsAgainst}</td>
+                <td className="px-3 py-2.5 text-right font-medium text-gray-600 dark:text-gray-400">
+                  {gdLabel(row.goalDifference)}
+                </td>
+                <td className="px-3 py-2.5 pr-4 text-right font-black text-gray-900 dark:text-white">{row.points}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
   );
 }
 
@@ -151,7 +153,8 @@ function GroupCard({
           {groupLabel(standing.group)}
         </h3>
       </div>
-      <table className="w-full text-xs">
+      <div className="overflow-x-auto">
+      <table className="w-full min-w-[280px] text-xs">
         <thead>
           <tr className="border-b border-gray-100 text-right text-gray-400 dark:border-gray-800">
             <th className="px-3 py-2 text-left font-semibold">Team</th>
@@ -204,6 +207,7 @@ function GroupCard({
           })}
         </tbody>
       </table>
+      </div>
     </div>
   );
 }
@@ -242,50 +246,52 @@ export function LeaderboardShell({
           <p className="text-sm text-gray-400">No participants yet. Add some in the admin panel.</p>
         ) : (
           <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-900">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="bg-linear-to-r from-blue-600 to-indigo-600 text-left text-xs font-bold uppercase tracking-wider text-blue-100">
-                  <th className="px-5 py-3">Rank</th>
-                  <th className="px-4 py-3">Participant</th>
-                  <th className="px-4 py-3 text-right">Points</th>
-                  <th className="px-4 py-3 text-right">Gap</th>
-                  <th className="px-4 py-3 text-right">Teams Left</th>
-                </tr>
-              </thead>
-              <tbody>
-                {entries.map((e) => {
-                  const medal = MEDAL[e.rank];
-                  return (
-                    <tr
-                      key={e.participantName}
-                      className={`border-b border-gray-50 last:border-0 dark:border-gray-800 ${medal?.row ?? 'hover:bg-gray-50 dark:hover:bg-gray-800/50'}`}
-                    >
-                      <td className="px-5 py-3.5">
-                        <span className="mr-1">{medal?.badge ?? ''}</span>
-                        <span className="font-black text-gray-700 dark:text-gray-200">{e.rank}</span>{' '}
-                        <span className={`text-xs ${RANK_COLOR[e.rankChange]}`}>
-                          {RANK_ICON[e.rankChange]}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3.5 font-semibold text-gray-900 dark:text-white">
-                        {e.participantName}
-                      </td>
-                      <td className={`px-4 py-3.5 text-right text-lg font-black ${medal?.pts ?? 'text-gray-700 dark:text-gray-200'}`}>
-                        {e.totalPoints}
-                      </td>
-                      <td className="px-4 py-3.5 text-right text-gray-400">
-                        {e.rank === 1 ? '—' : `-${e.scoreDelta}`}
-                      </td>
-                      <td className="px-4 py-3.5 text-right">
-                        <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400">
-                          {e.teamsRemaining}
-                        </span>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[340px] text-sm">
+                <thead>
+                  <tr className="bg-linear-to-r from-blue-600 to-indigo-600 text-left text-xs font-bold uppercase tracking-wider text-blue-100">
+                    <th className="px-5 py-3">Rank</th>
+                    <th className="px-4 py-3">Participant</th>
+                    <th className="px-4 py-3 text-right">Points</th>
+                    <th className="hidden px-4 py-3 text-right sm:table-cell">Gap</th>
+                    <th className="px-4 py-3 text-right">Teams</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {entries.map((e) => {
+                    const medal = MEDAL[e.rank];
+                    return (
+                      <tr
+                        key={e.participantName}
+                        className={`border-b border-gray-50 last:border-0 dark:border-gray-800 ${medal?.row ?? 'hover:bg-gray-50 dark:hover:bg-gray-800/50'}`}
+                      >
+                        <td className="px-5 py-3.5">
+                          <span className="mr-1">{medal?.badge ?? ''}</span>
+                          <span className="font-black text-gray-700 dark:text-gray-200">{e.rank}</span>{' '}
+                          <span className={`text-xs ${RANK_COLOR[e.rankChange]}`}>
+                            {RANK_ICON[e.rankChange]}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3.5 font-semibold text-gray-900 dark:text-white">
+                          {e.participantName}
+                        </td>
+                        <td className={`px-4 py-3.5 text-right text-lg font-black ${medal?.pts ?? 'text-gray-700 dark:text-gray-200'}`}>
+                          {e.totalPoints}
+                        </td>
+                        <td className="hidden px-4 py-3.5 text-right text-gray-400 sm:table-cell">
+                          {e.rank === 1 ? '—' : `-${e.scoreDelta}`}
+                        </td>
+                        <td className="px-4 py-3.5 text-right">
+                          <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400">
+                            {e.teamsRemaining}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </section>
