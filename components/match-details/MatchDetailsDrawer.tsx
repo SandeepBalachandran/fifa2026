@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useMatchDetails } from '@/hooks/useMatchDetails';
 import { GoalsList } from './GoalsList';
 import { BookingsList } from './BookingsList';
+import { Head2HeadSection } from './Head2HeadSection';
 import { getBetLabel } from '@/lib/bet-tracker/config';
 import type { MatchDetail, MatchDuration } from '@/lib/football-data/match-types';
 
@@ -190,6 +191,14 @@ function DrawerContent({ matchId, onClose }: { matchId: string | null; onClose: 
           Match details will appear once the game kicks off.
         </p>
       )}
+
+      {/* Head to head */}
+      <section>
+        <h3 className="mb-3 text-xs font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+          Head to Head
+        </h3>
+        <Head2HeadSection matchId={String(data.id)} />
+      </section>
     </div>
   );
 }

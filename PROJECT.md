@@ -188,6 +188,32 @@ The focus is team ownership and tournament-based competition.
 
 ---
 
+# Football Data API — Available Endpoints
+
+Base URL: `https://api.football-data.org/v4`  
+Auth: `X-Auth-Token` header
+
+| Status | API Name              | Method | Endpoint                                          |
+| ------ | --------------------- | ------ | ------------------------------------------------- |
+| ⏳     | Area                  | GET    | `/v4/areas/{areaId}`                              |
+| ⏳     | Area List             | GET    | `/v4/areas/`                                      |
+| ⏳     | Competition           | GET    | `/v4/competitions/{competitionCode}/`             |
+| ⏳     | Competition List      | GET    | `/v4/competitions`                                |
+| ✅     | Competition Standings | GET    | `/v4/competitions/{competitionCode}/standings`    |
+| ✅     | Competition Matches   | GET    | `/v4/competitions/{competitionCode}/matches`      |
+| ⏳     | Competition Teams     | GET    | `/v4/competitions/{competitionCode}/teams`        |
+| ✅     | Competition Scorers   | GET    | `/v4/competitions/{competitionCode}/scorers`      |
+| ✅     | Team                  | GET    | `/v4/teams/{teamId}`                              |
+| ⏳     | Team List             | GET    | `/v4/teams`                                       |
+| ✅     | Team Matches          | GET    | `/v4/teams/{teamId}/matches`                      |
+| ✅     | Person                | GET    | `/v4/persons/{personId}`                          |
+| ⏳     | Person Matches        | GET    | `/v4/persons/{personId}/matches`                  |
+| ✅     | Match                 | GET    | `/v4/matches/{matchId}`                           |
+| ⏳     | Match List            | GET    | `/v4/matches`                                     |
+| ✅     | Match Head-to-Head    | GET    | `/v4/matches/{matchId}/head2head`                 |
+
+---
+
 # Future Enhancements
 
 Potential future additions include:
@@ -204,3 +230,5 @@ Potential future additions include:
 * Historical tournament archives
 * AI-powered tournament predictions
 * Mobile application
+
+

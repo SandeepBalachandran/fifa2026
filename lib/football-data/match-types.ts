@@ -59,3 +59,35 @@ export interface MatchDetail {
   bookings: Booking[] | null;
   referees: Referee[] | null;
 }
+
+export interface H2HTeamRecord {
+  id: number;
+  name: string;
+  wins: number;
+  draws: number;
+  losses: number;
+}
+
+export interface H2HSummary {
+  numberOfMatches: number;
+  totalGoals: number;
+  homeTeam: H2HTeamRecord;
+  awayTeam: H2HTeamRecord;
+}
+
+export interface H2HMatch {
+  id: number;
+  utcDate: string;
+  status: string;
+  homeTeam: { id: number; name: string; crest: string | null };
+  awayTeam: { id: number; name: string; crest: string | null };
+  score: {
+    winner: MatchWinner | null;
+    fullTime: { home: number | null; away: number | null };
+  } | null;
+}
+
+export interface Head2HeadResult {
+  head2head: H2HSummary;
+  matches: H2HMatch[];
+}

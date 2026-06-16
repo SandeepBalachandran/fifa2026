@@ -21,9 +21,10 @@ const FILTER_OPTIONS: { value: SquadPosition | 'ALL'; label: string }[] = [
 
 interface SquadSectionProps {
   squad: SquadMember[];
+  onPlayerClick?: (player: SquadMember) => void;
 }
 
-export function SquadSection({ squad }: SquadSectionProps) {
+export function SquadSection({ squad, onPlayerClick }: SquadSectionProps) {
   const [search, setSearch] = useState('');
   const [positionFilter, setPositionFilter] = useState<SquadPosition | 'ALL'>('ALL');
   const [collapsed, setCollapsed] = useState<Set<SquadPosition>>(new Set());
@@ -113,7 +114,7 @@ export function SquadSection({ squad }: SquadSectionProps) {
               {isOpen && (
                 <div id={`squad-group-${key}`} className="mt-1.5 flex flex-col gap-1.5">
                   {players.map((p) => (
-                    <PlayerCard key={p.id} player={p} />
+                    <PlayerCard key={p.id} player={p} onClick={onPlayerClick} />
                   ))}
                 </div>
               )}

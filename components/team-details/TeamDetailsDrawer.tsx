@@ -10,6 +10,8 @@ import { CoachCard } from './CoachCard';
 import { SquadSummary } from './SquadSummary';
 import { SquadSection } from './SquadSection';
 import { TeamMatchesList } from './TeamMatchesList';
+import { PersonDrawer } from '@/components/person/PersonDrawer';
+import type { SquadMember } from '@/lib/football-data/team-types';
 
 interface TeamDetailsDrawerProps {
   teamId: string | null;
@@ -62,8 +64,14 @@ export function TeamDetailsDrawer({ teamId, onClose }: TeamDetailsDrawerProps) {
   // Two-phase animation: mount first, then apply open classes on next frame
   const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [selectedPlayer, setSelectedPlayer] = useState<SquadMember | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
+
+  // Reset selected player whenever the team drawer closes
+  useEffect(() => {
+    if (!teamId) setSelectedPlayer(null);
+  }, [teamId]);
 
   useEffect(() => {
     if (teamId) {
@@ -149,9 +157,16 @@ export function TeamDetailsDrawer({ teamId, onClose }: TeamDetailsDrawerProps) {
 
         {/* Scrollable content */}
         <div className="flex-1 overflow-y-auto">
-          <DrawerContent teamId={teamId} onClose={onClose} />
+          <DrawerContent teamId={teamId} onClose={onClose} onPlayerClick={setSelectedPlayer} />
         </div>
       </div>
+
+      {/* Player profile — nested drawer on top */}
+      <PersonDrawer
+        personId={selectedPlayer?.id ?? null}
+        personName={selectedPlayer?.name}
+        onClose={() => setSelectedPlayer(null)}
+      />
     </>
   );
 }
@@ -160,7 +175,15 @@ type DrawerTab = 'overview' | 'fixtures';
 
 // ── Content (fetches data) ─────────────────────────────────────────────────────
 
-function DrawerContent({ teamId, onClose }: { teamId: string | null; onClose: () => void }) {
+function DrawerContent({
+  teamId,
+  onClose,
+  onPlayerClick,
+}: {
+  teamId: string | null;
+  onClose: () => void;
+  onPlayerClick: (player: SquadMember) => void;
+}) {
   const [tab, setTab] = useState<DrawerTab>('overview');
   const { data, loading, error, retry } = useTeamDetails(teamId);
   const { data: matchFixtures, loading: matchLoading, error: matchError, retry: matchRetry } = useTeamMatches(
@@ -260,7 +283,7 @@ function DrawerContent({ teamId, onClose }: { teamId: string | null; onClose: ()
               <h3 className="mb-3 text-xs font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">
                 Squad
               </h3>
-              <SquadSection squad={data.squad} />
+              <SquadSection squad={data.squad} onPlayerClick={onPlayerClick} />
             </section>
 
             {/* Last updated */}
