@@ -42,37 +42,37 @@ Fixed:
 
 ### Sandy — 24 teams
 
-| Group | Teams |
-| ----- | ----- |
-| A | South Korea, Czechia |
-| B | Switzerland, Bosnia-Herzegovina |
-| C | Morocco, Scotland |
-| D | Australia, Turkey |
-| E | Ecuador, Ivory Coast |
-| F | Netherlands, Tunisia |
-| G | Iran, Egypt |
-| H | Spain, Cape Verde Islands |
-| I | Senegal, Norway |
-| J | Austria, Algeria |
-| K | Colombia, Uzbekistan |
-| L | Croatia, Ghana |
+| Group | Teams | Pick |
+| ----- | ----- | ---- |
+| A | Mexico, South Africa | #1 + #4 |
+| B | Switzerland, Bosnia-Herzegovina | #1 + #4 |
+| C | Brazil, Haiti | #1 + #4 |
+| D | Australia, Turkey | #2 + #3 |
+| E | Ecuador, Ivory Coast | #2 + #3 |
+| F | Netherlands, Tunisia | #1 + #4 (fixed) |
+| G | Iran, Egypt | #2 + #3 |
+| H | Spain, Cape Verde Islands | #1 + #4 |
+| I | France, Iraq | #1 + #4 |
+| J | Austria, Algeria | #2 + #3 |
+| K | Colombia, Congo DR | #2 + #3 |
+| L | Croatia, Ghana | #2 + #3 |
 
 ### Rahul — 24 teams
 
-| Group | Teams |
-| ----- | ----- |
-| A | Mexico, South Africa |
-| B | Canada, Qatar |
-| C | Brazil, Haiti |
-| D | United States, Paraguay |
-| E | Germany, Curaçao |
-| F | Japan, Sweden |
-| G | Belgium, New Zealand |
-| H | Uruguay, Saudi Arabia |
-| I | France, Iraq |
-| J | Argentina, Jordan |
-| K | Portugal, Congo DR |
-| L | England, Panama |
+| Group | Teams | Pick |
+| ----- | ----- | ---- |
+| A | South Korea, Czechia | #2 + #3 |
+| B | Canada, Qatar | #2 + #3 |
+| C | Morocco, Scotland | #2 + #3 |
+| D | United States, Paraguay | #1 + #4 |
+| E | Germany, Curaçao | #1 + #4 |
+| F | Japan, Sweden | #2 + #3 |
+| G | Belgium, New Zealand | #1 + #4 |
+| H | Uruguay, Saudi Arabia | #2 + #3 |
+| I | Senegal, Norway | #2 + #3 |
+| J | Argentina, Jordan | #1 + #4 (fixed) |
+| K | Portugal, Uzbekistan | #1 + #4 |
+| L | England, Panama | #1 + #4 |
 
 ---
 
@@ -81,20 +81,20 @@ Fixed:
 ```ts
 {
   // Group A
-  "South Korea": "Sandy",
-  "Czechia": "Sandy",
-  "Mexico": "Rahul",
-  "South Africa": "Rahul",
+  "Mexico": "Sandy",
+  "South Africa": "Sandy",
+  "South Korea": "Rahul",
+  "Czechia": "Rahul",
   // Group B
   "Switzerland": "Sandy",
   "Bosnia-Herzegovina": "Sandy",
   "Canada": "Rahul",
   "Qatar": "Rahul",
   // Group C
-  "Morocco": "Sandy",
-  "Scotland": "Sandy",
-  "Brazil": "Rahul",
-  "Haiti": "Rahul",
+  "Brazil": "Sandy",
+  "Haiti": "Sandy",
+  "Morocco": "Rahul",
+  "Scotland": "Rahul",
   // Group D
   "Australia": "Sandy",
   "Turkey": "Sandy",
@@ -121,10 +121,10 @@ Fixed:
   "Uruguay": "Rahul",
   "Saudi Arabia": "Rahul",
   // Group I
-  "Senegal": "Sandy",
-  "Norway": "Sandy",
-  "France": "Rahul",
-  "Iraq": "Rahul",
+  "France": "Sandy",
+  "Iraq": "Sandy",
+  "Senegal": "Rahul",
+  "Norway": "Rahul",
   // Group J
   "Austria": "Sandy",
   "Algeria": "Sandy",
@@ -132,9 +132,9 @@ Fixed:
   "Jordan": "Rahul",
   // Group K
   "Colombia": "Sandy",
-  "Uzbekistan": "Sandy",
+  "Congo DR": "Sandy",
   "Portugal": "Rahul",
-  "Congo DR": "Rahul",
+  "Uzbekistan": "Rahul",
   // Group L
   "Croatia": "Sandy",
   "Ghana": "Sandy",

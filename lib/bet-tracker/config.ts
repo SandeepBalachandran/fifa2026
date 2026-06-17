@@ -7,83 +7,85 @@ export type BetParticipant = 'Sandy' | 'Rahul';
 export const AMOUNT_PER_WIN = 30;
 
 export const BET_OWNERSHIP: Record<string, BetParticipant> = {
-  // Assignment is group-based: within each group, teams are ranked by FIFA
-  // strength. Each person gets one strong (rank 1 or 2) and one weak (rank 3
-  // or 4) per group. Who gets rank 1 alternates across groups for balance.
+  // Group-based split: within each group teams ranked by FIFA strength.
+  // Each person gets the #1+#4 pair OR the #2+#3 pair from that group.
+  // Who gets the #1 pick is chosen so both sides have comparable elite teams.
+  // Sandy: France, Spain, Brazil, Netherlands (top-7 anchors)
+  // Rahul: Argentina, England, Belgium, Portugal, Germany (top-9 anchors)
 
   // ── Sandy (24) ──────────────────────────────────────────────────────────
-  // Group A
-  'South Korea':         'Sandy',  // API may use "Korea Republic"
-  Czechia:               'Sandy',  // API may use "Czech Republic"
-  // Group B
+  // Group A — #1+#4 pair
+  Mexico:                'Sandy',
+  'South Africa':        'Sandy',
+  // Group B — #1+#4 pair
   Switzerland:           'Sandy',
   'Bosnia-Herzegovina':  'Sandy',  // API may use "Bosnia and Herzegovina"
-  // Group C
-  Morocco:               'Sandy',
-  Scotland:              'Sandy',
-  // Group D
+  // Group C — #1+#4 pair (Brazil)
+  Brazil:                'Sandy',
+  Haiti:                 'Sandy',
+  // Group D — #2+#3 pair
   Australia:             'Sandy',
   Turkey:                'Sandy',  // API may use "Türkiye"
-  // Group E
+  // Group E — #2+#3 pair
   Ecuador:               'Sandy',
   'Ivory Coast':         'Sandy',  // API may use "Côte d'Ivoire"
-  // Group F
+  // Group F — #1+#4 pair (Netherlands, fixed)
   Netherlands:           'Sandy',  // fixed
   Tunisia:               'Sandy',
-  // Group G
+  // Group G — #2+#3 pair
   Iran:                  'Sandy',
   Egypt:                 'Sandy',
-  // Group H
+  // Group H — #1+#4 pair (Spain)
   Spain:                 'Sandy',
   'Cape Verde Islands':  'Sandy',  // API may use "Cape Verde"
-  // Group I
-  Senegal:               'Sandy',
-  Norway:                'Sandy',
-  // Group J
+  // Group I — #1+#4 pair (France)
+  France:                'Sandy',
+  Iraq:                  'Sandy',
+  // Group J — #2+#3 pair
   Austria:               'Sandy',
   Algeria:               'Sandy',
-  // Group K
+  // Group K — #2+#3 pair
   Colombia:              'Sandy',
-  Uzbekistan:            'Sandy',
-  // Group L
+  'Congo DR':            'Sandy',  // API may use "DR Congo"
+  // Group L — #2+#3 pair
   Croatia:               'Sandy',
   Ghana:                 'Sandy',
 
   // ── Rahul (24) ──────────────────────────────────────────────────────────
-  // Group A
-  Mexico:                'Rahul',
-  'South Africa':        'Rahul',
-  // Group B
+  // Group A — #2+#3 pair
+  'South Korea':         'Rahul',  // API may use "Korea Republic"
+  Czechia:               'Rahul',  // API may use "Czech Republic"
+  // Group B — #2+#3 pair
   Canada:                'Rahul',
   Qatar:                 'Rahul',
-  // Group C
-  Brazil:                'Rahul',
-  Haiti:                 'Rahul',
-  // Group D
+  // Group C — #2+#3 pair
+  Morocco:               'Rahul',
+  Scotland:              'Rahul',
+  // Group D — #1+#4 pair (USA)
   'United States':       'Rahul',  // API may use "USA"
   Paraguay:              'Rahul',
-  // Group E
+  // Group E — #1+#4 pair (Germany)
   Germany:               'Rahul',
   'Curaçao':             'Rahul',
-  // Group F
+  // Group F — #2+#3 pair
   Japan:                 'Rahul',
   Sweden:                'Rahul',
-  // Group G
+  // Group G — #1+#4 pair (Belgium)
   Belgium:               'Rahul',
   'New Zealand':         'Rahul',
-  // Group H
+  // Group H — #2+#3 pair
   Uruguay:               'Rahul',
   'Saudi Arabia':        'Rahul',
-  // Group I
-  France:                'Rahul',
-  Iraq:                  'Rahul',
-  // Group J
+  // Group I — #2+#3 pair
+  Senegal:               'Rahul',
+  Norway:                'Rahul',
+  // Group J — #1+#4 pair (Argentina, fixed)
   Argentina:             'Rahul',  // fixed
   Jordan:                'Rahul',
-  // Group K
+  // Group K — #1+#4 pair (Portugal)
   Portugal:              'Rahul',
-  'Congo DR':            'Rahul',  // API may use "DR Congo"
-  // Group L
+  Uzbekistan:            'Rahul',
+  // Group L — #1+#4 pair (England)
   England:               'Rahul',
   Panama:                'Rahul',
 };
