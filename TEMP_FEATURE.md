@@ -28,59 +28,118 @@ After the World Cup ends, this entire feature can be removed without affecting a
 
 # Team Assignment
 
-## Fixed Assignments
+## Assignment Method
 
-### Sandy
+Teams are assigned by group. Each group has 4 teams ranked by FIFA strength.
+Within each group, each person receives one strong team (rank 1 or 2) and one weak team (rank 3 or 4).
+Who receives rank 1 vs rank 2 alternates across groups to balance total strength.
 
-* Netherlands
+Fixed:
+* Netherlands → Sandy (Group F, rank 1)
+* Argentina → Rahul (Group J, rank 1)
 
-### Rahul
+## Final Assignment
 
-* Argentina
+### Sandy — 24 teams
 
-These assignments are mandatory.
+| Group | Teams |
+| ----- | ----- |
+| A | South Korea, Czechia |
+| B | Switzerland, Bosnia-Herzegovina |
+| C | Morocco, Scotland |
+| D | Australia, Turkey |
+| E | Ecuador, Ivory Coast |
+| F | Netherlands, Tunisia |
+| G | Iran, Egypt |
+| H | Spain, Cape Verde Islands |
+| I | Senegal, Norway |
+| J | Austria, Algeria |
+| K | Colombia, Uzbekistan |
+| L | Croatia, Ghana |
 
----
+### Rahul — 24 teams
 
-# Remaining Team Distribution
-
-There are 48 World Cup teams.
-
-After assigning:
-
-* Netherlands → Sandy
-* Argentina → Rahul
-
-Distribute the remaining 46 teams as evenly as possible:
-
-* Sandy = 24 teams total
-* Rahul = 24 teams total
-
-### Distribution Goal
-
-The list should be balanced based on overall team strength.
-
-Avoid assigning all strong teams to one person.
-
-The intent is:
-
-* Comparable probability of winning
-* Fair betting experience
-* Similar number of strong, medium, and weak teams on each side
+| Group | Teams |
+| ----- | ----- |
+| A | Mexico, South Africa |
+| B | Canada, Qatar |
+| C | Brazil, Haiti |
+| D | United States, Paraguay |
+| E | Germany, Curaçao |
+| F | Japan, Sweden |
+| G | Belgium, New Zealand |
+| H | Uruguay, Saudi Arabia |
+| I | France, Iraq |
+| J | Argentina, Jordan |
+| K | Portugal, Congo DR |
+| L | England, Panama |
 
 ---
 
 # Hardcoded Team Ownership
 
-Store ownership mapping in a hardcoded configuration.
-
-Example:
-
 ```ts
 {
-  "Argentina": "Rahul",
+  // Group A
+  "South Korea": "Sandy",
+  "Czechia": "Sandy",
+  "Mexico": "Rahul",
+  "South Africa": "Rahul",
+  // Group B
+  "Switzerland": "Sandy",
+  "Bosnia-Herzegovina": "Sandy",
+  "Canada": "Rahul",
+  "Qatar": "Rahul",
+  // Group C
+  "Morocco": "Sandy",
+  "Scotland": "Sandy",
+  "Brazil": "Rahul",
+  "Haiti": "Rahul",
+  // Group D
+  "Australia": "Sandy",
+  "Turkey": "Sandy",
+  "United States": "Rahul",
+  "Paraguay": "Rahul",
+  // Group E
+  "Ecuador": "Sandy",
+  "Ivory Coast": "Sandy",
+  "Germany": "Rahul",
+  "Curaçao": "Rahul",
+  // Group F
   "Netherlands": "Sandy",
-  ...
+  "Tunisia": "Sandy",
+  "Japan": "Rahul",
+  "Sweden": "Rahul",
+  // Group G
+  "Iran": "Sandy",
+  "Egypt": "Sandy",
+  "Belgium": "Rahul",
+  "New Zealand": "Rahul",
+  // Group H
+  "Spain": "Sandy",
+  "Cape Verde Islands": "Sandy",
+  "Uruguay": "Rahul",
+  "Saudi Arabia": "Rahul",
+  // Group I
+  "Senegal": "Sandy",
+  "Norway": "Sandy",
+  "France": "Rahul",
+  "Iraq": "Rahul",
+  // Group J
+  "Austria": "Sandy",
+  "Algeria": "Sandy",
+  "Argentina": "Rahul",
+  "Jordan": "Rahul",
+  // Group K
+  "Colombia": "Sandy",
+  "Uzbekistan": "Sandy",
+  "Portugal": "Rahul",
+  "Congo DR": "Rahul",
+  // Group L
+  "Croatia": "Sandy",
+  "Ghana": "Sandy",
+  "England": "Rahul",
+  "Panama": "Rahul",
 }
 ```
 
