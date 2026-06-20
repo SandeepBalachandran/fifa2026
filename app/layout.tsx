@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "World Cup Draft Manager",
-  description: "Fantasy-style World Cup team ownership and scoring",
+  title: "FIFApp",
+  description: "Fantasy football draft tracker with live fixtures, standings, and scorers across all major leagues",
 };
 
 const NAV_LINKS = [
@@ -59,8 +59,7 @@ export default function RootLayout({
             <Link href="/" className="flex shrink-0 items-center gap-2">
               <span className="text-2xl">⚽</span>
               <span className="text-lg font-black tracking-tight text-white">
-                WC Draft{" "}
-                <span className="text-amber-400">2026</span>
+                FIF<span className="text-amber-400">App</span>
               </span>
             </Link>
 
@@ -106,7 +105,7 @@ export default function RootLayout({
 
         {/* Footer */}
         <footer className="border-t border-green-200 bg-green-900/10 py-4 text-center text-xs text-green-700 dark:border-green-900/30 dark:text-green-500">
-          ⚽ World Cup Draft Manager 2026 — Live data from Football Data API
+          ⚽ FIFApp — Live data from Football Data API
         </footer>
       </body>
     </html>

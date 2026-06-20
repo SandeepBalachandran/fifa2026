@@ -1,4 +1,4 @@
-# FIFA Fantasy War Room
+# FIFApp
 
 A private fantasy football draft tracker and live match dashboard built with Next.js 16 App Router. Supports the FIFA World Cup draft game between participants, with live fixtures, standings, top scorers, head-to-head battles, and bet tracking — all switchable across major football leagues and historical seasons.
 
@@ -438,3 +438,49 @@ All pages are mobile-first with Tailwind breakpoints:
 - Fixture cards stack to 1 column on mobile, 2 on `sm`
 - Group standings cards: 1 column on mobile, 2 columns from 480px
 - `CompetitionSwitcher` + `SeasonSwitcher` wrapped in `flex-wrap` rows on all header bars
+- `CompetitionSwitcher` capped at `max-w-[160px]` on mobile, unconstrained on `sm+`
+- `SeasonSwitcher` capped at `max-w-[90px]` on mobile, unconstrained on `sm+`
+- Bet Tracker match history table: Date hidden on mobile, Match column stacks teams vertically, Winner shows crest-only on mobile
+
+---
+
+## Changelog
+
+### App Rename — FIFApp
+- `package.json` `name` changed from `"fifa"` to `"fifaapp"`
+- `app/layout.tsx` page `<title>` changed from `"World Cup Draft Manager"` to `"FIFApp"`
+- `app/layout.tsx` header logo changed from `"WC Draft 2026"` to `"FIFApp"` (Fifa + amber "App")
+- `app/layout.tsx` footer changed from `"⚽ World Cup Draft Manager 2026"` to `"⚽ FIFApp"`
+- `app/layout.tsx` meta description updated to reflect multi-league scope
+- `README.md` title updated from `"FIFA Fantasy War Room"` to `"FIFApp"`
+
+### Multi-League & Season Support
+- Removed hardcoded `COMPETITION = 'WC'` constant from API client
+- `fetchFixtures`, `fetchStandings`, `fetchScorers` all accept `competition` (default `'WC'`) and `season` (start year) params
+- Added `fetchCompetitions()` and `fetchCompetitionSeasons()` to `lib/football-data/client.ts`
+- New proxy API routes: `GET /api/competitions` and `GET /api/competitions/[code]/seasons`
+- `CompetitionSwitcher` client component: fetches competitions on mount, updates `?competition=` URL param
+- `SeasonSwitcher` client component: re-fetches seasons when competition changes, updates `?season=` URL param
+- All four view pages (War Room, Fixtures, Scorers, Leaderboard) read `searchParams` and pass competition/season to fetch functions
+- War Room: WC fetch kept separate for bet stats; display fixtures/standings use selected competition
+- `MatchStage` type extended to open union `| (string & {})` to handle league-specific stage strings (e.g. `REGULAR_SEASON`)
+- `FixturesShell` `groupByStage` refactored to handle arbitrary stage strings with fallback title-casing
+
+### API Plan Restriction Handling
+- `fetchFixtures` and `fetchStandings` now throw a human-readable error on HTTP 403
+- `PlanUpgradeBanner` component added: shows lock icon, explanation, and disabled "Subscribe — Coming Soon" button
+- War Room, Fixtures, Scorers, and Leaderboard all surface `PlanUpgradeBanner` instead of silently showing empty sections when historical data is unavailable
+
+### Vercel / Performance Fix
+- War Room `Promise.all` now includes `compFixtures` fetch alongside `wcFixtures` and `standings` — eliminates sequential waterfall on cold serverless starts
+- `getWarRoomData()` wrapped in `.catch()` so a store read failure no longer crashes the page render
+
+### Responsive Design
+- **Leaderboard StandingsTable**: removed `min-w-[520px]`; P/D/L hidden on mobile, GF/GA hidden below `md`; uses `shortName` on mobile
+- **Leaderboard GroupCard**: removed `min-w-[280px]` and `overflow-x-auto`; P/D/L hidden below 400px; grid changed from 3-col to fixed 2-col
+- **Leaderboard Draft Standings**: removed `min-w-[340px]`; reduced padding on mobile; Gap column hidden below `sm`
+- **Scorers**: collapsed to 3-col grid on mobile (rank, player, goals only); Ast/Pen/MP hidden below `sm`; removed `min-w-[400px]` wrapper
+- **Bet Tracker match history**: removed `min-w-[560px]`; Date column hidden on mobile; Match column stacks home/away vertically with truncation; Winner shows crest only on mobile; Amount header shortened to ₹
+- **BattleCard**: team names and owner labels now truncate with `min-w-0`
+- **CompetitionSwitcher**: `max-w-[160px]` on mobile, full width on `sm+`
+- **SeasonSwitcher**: `max-w-[90px]` on mobile, full width on `sm+`

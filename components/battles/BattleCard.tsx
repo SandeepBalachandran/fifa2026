@@ -48,17 +48,17 @@ export function BattleCard({ battle }: { battle: DirectBattle }) {
       </div>
 
       <div className="flex items-center justify-between gap-3">
-        <div className="flex-1 text-center">
+        <div className="min-w-0 flex-1 text-center">
           <BattleCrest src={battle.homeCrest} name={battle.homeTeam} />
-          <p className="font-bold text-gray-900 dark:text-white">{battle.homeTeam}</p>
-          <p className="mt-0.5 text-xs font-medium text-gray-500 dark:text-gray-400">
+          <p className="truncate text-sm font-bold text-gray-900 dark:text-white">{battle.homeTeam}</p>
+          <p className="mt-0.5 truncate text-xs font-medium text-gray-500 dark:text-gray-400">
             {battle.homeOwner}
           </p>
         </div>
 
-        <div className="shrink-0 text-center">
+        <div className="shrink-0 px-1 text-center">
           {battle.status === 'FINISHED' && battle.outcome ? (
-            <span className="rounded-lg bg-orange-100 px-2.5 py-1 text-xs font-bold text-orange-700 dark:bg-orange-900/40 dark:text-orange-400">
+            <span className="rounded-lg bg-orange-100 px-2 py-1 text-xs font-bold text-orange-700 dark:bg-orange-900/40 dark:text-orange-400">
               {OUTCOME_LABEL[battle.outcome]}
             </span>
           ) : (
@@ -66,10 +66,10 @@ export function BattleCard({ battle }: { battle: DirectBattle }) {
           )}
         </div>
 
-        <div className="flex-1 text-center">
+        <div className="min-w-0 flex-1 text-center">
           <BattleCrest src={battle.awayCrest} name={battle.awayTeam} />
-          <p className="font-bold text-gray-900 dark:text-white">{battle.awayTeam}</p>
-          <p className="mt-0.5 text-xs font-medium text-gray-500 dark:text-gray-400">
+          <p className="truncate text-sm font-bold text-gray-900 dark:text-white">{battle.awayTeam}</p>
+          <p className="mt-0.5 truncate text-xs font-medium text-gray-500 dark:text-gray-400">
             {battle.awayOwner}
           </p>
         </div>

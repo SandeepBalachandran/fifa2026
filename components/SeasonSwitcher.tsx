@@ -53,7 +53,7 @@ export function SeasonSwitcher() {
       value={selected}
       onChange={(e) => handleChange(e.target.value)}
       disabled={isPending}
-      className="rounded-lg border border-green-200 bg-white px-3 py-1.5 text-sm font-medium text-green-900 shadow-sm transition-opacity disabled:opacity-50 dark:border-green-800 dark:bg-gray-900 dark:text-green-100"
+      className="max-w-[90px] rounded-lg border border-green-200 bg-white px-3 py-1.5 text-sm font-medium text-green-900 shadow-sm transition-opacity disabled:opacity-50 dark:border-green-800 dark:bg-gray-900 dark:text-green-100 sm:max-w-none"
     >
       {seasons.map((s) => (
         <option key={s.id} value={String(s.year)}>

@@ -73,53 +73,53 @@ function TeamList({
   );
 }
 
+function OwnerTag({ owner }: { owner: string | undefined }) {
+  if (!owner) return null;
+  const cls = owner === 'Sandy' ? 'text-emerald-600 dark:text-emerald-400' : 'text-blue-600 dark:text-blue-400';
+  return <span className={`shrink-0 text-xs font-bold ${cls}`}>({owner === 'Sandy' ? 'S' : 'R'})</span>;
+}
+
 function HistoryRow({ record }: { record: BetMatchRecord }) {
   const homeBetOwner = BET_OWNERSHIP[record.homeTeam];
   const awayBetOwner = BET_OWNERSHIP[record.awayTeam];
+  const winnerCrest = record.winner === record.homeTeam ? record.homeCrest : record.awayCrest;
 
   const formattedDate = new Date(record.date).toLocaleDateString('en-GB', {
     day: 'numeric',
     month: 'short',
-    year: 'numeric',
   });
 
   return (
     <tr className="border-b border-gray-50 last:border-0 dark:border-gray-800">
-      <td className="px-4 py-3 text-xs text-gray-400 whitespace-nowrap">{formattedDate}</td>
-      <td className="px-4 py-3">
-        <div className="flex items-center gap-2 text-sm">
-          <Crest src={record.homeCrest} name={record.homeTeam} size={16} />
-          <span className="font-medium text-gray-800 dark:text-gray-200">{record.homeTeam}</span>
-          {homeBetOwner && (
-            <span className={`text-xs font-bold ${homeBetOwner === 'Sandy' ? 'text-emerald-600 dark:text-emerald-400' : 'text-blue-600 dark:text-blue-400'}`}>
-              ({homeBetOwner === 'Sandy' ? 'S' : 'R'})
-            </span>
-          )}
-          <span className="text-gray-400">vs</span>
-          <Crest src={record.awayCrest} name={record.awayTeam} size={16} />
-          <span className="font-medium text-gray-800 dark:text-gray-200">{record.awayTeam}</span>
-          {awayBetOwner && (
-            <span className={`text-xs font-bold ${awayBetOwner === 'Sandy' ? 'text-emerald-600 dark:text-emerald-400' : 'text-blue-600 dark:text-blue-400'}`}>
-              ({awayBetOwner === 'Sandy' ? 'S' : 'R'})
-            </span>
-          )}
+      <td className="hidden px-3 py-3 text-xs text-gray-400 whitespace-nowrap sm:table-cell sm:px-4">{formattedDate}</td>
+      <td className="px-3 py-3 sm:px-4">
+        <div className="flex flex-col gap-1 text-xs sm:text-sm">
+          <div className="flex min-w-0 items-center gap-1.5">
+            <Crest src={record.homeCrest} name={record.homeTeam} size={14} />
+            <span className="min-w-0 truncate font-medium text-gray-800 dark:text-gray-200">{record.homeTeam}</span>
+            <OwnerTag owner={homeBetOwner} />
+          </div>
+          <div className="flex min-w-0 items-center gap-1.5">
+            <Crest src={record.awayCrest} name={record.awayTeam} size={14} />
+            <span className="min-w-0 truncate font-medium text-gray-800 dark:text-gray-200">{record.awayTeam}</span>
+            <OwnerTag owner={awayBetOwner} />
+          </div>
         </div>
       </td>
-      <td className="px-4 py-3 text-sm">
+      <td className="px-2 py-3 text-xs sm:px-4 sm:text-sm">
         {record.winner ? (
-          <div className="flex items-center gap-1.5">
-            <Crest src={record.winner === record.homeTeam ? record.homeCrest : record.awayCrest} name={record.winner} size={14} />
-            <span className="font-semibold text-gray-900 dark:text-white">{record.winner}</span>
+          <div className="flex items-center gap-1">
+            <Crest src={winnerCrest} name={record.winner} size={13} />
+            <span className="hidden font-semibold text-gray-900 dark:text-white sm:inline">{record.winner}</span>
+            <span className="font-semibold text-gray-900 dark:text-white sm:hidden">W</span>
           </div>
         ) : (
           <span className="text-gray-400">Draw</span>
         )}
       </td>
-      <td className="px-4 py-3 text-sm">
+      <td className="px-2 py-3 text-xs sm:px-4 sm:text-sm">
         {record.nobet ? (
-          <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-400 dark:bg-gray-800">
-            same owner
-          </span>
+          <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] text-gray-400 dark:bg-gray-800">—</span>
         ) : record.winnerOwner ? (
           <span className={`font-bold ${record.winnerOwner === 'Sandy' ? 'text-emerald-600 dark:text-emerald-400' : 'text-blue-600 dark:text-blue-400'}`}>
             {record.winnerOwner}
@@ -128,9 +128,9 @@ function HistoryRow({ record }: { record: BetMatchRecord }) {
           <span className="text-gray-400">—</span>
         )}
       </td>
-      <td className="px-4 py-3 text-sm">
+      <td className="px-2 py-3 text-xs sm:px-4 sm:text-sm">
         {record.nobet ? (
-          <span className="text-gray-300 dark:text-gray-600">no bet</span>
+          <span className="text-gray-300 dark:text-gray-600">—</span>
         ) : record.amount > 0 ? (
           <span className="font-bold text-amber-600 dark:text-amber-400">+₹{record.amount}</span>
         ) : (
@@ -221,15 +221,15 @@ export default async function BetTrackerPage() {
           <p className="text-sm text-gray-400">No completed matches yet.</p>
         ) : (
           <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-md dark:border-gray-700 dark:bg-gray-900">
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[560px] text-sm">
+            <div>
+              <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-gray-100 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:border-gray-800">
-                    <th className="px-4 py-3 text-left">Date</th>
-                    <th className="px-4 py-3 text-left">Match</th>
-                    <th className="px-4 py-3 text-left">Winner</th>
-                    <th className="px-4 py-3 text-left">Owner</th>
-                    <th className="px-4 py-3 text-left">Amount</th>
+                    <th className="hidden px-3 py-3 text-left sm:table-cell sm:px-4">Date</th>
+                    <th className="px-3 py-3 text-left sm:px-4">Match</th>
+                    <th className="px-2 py-3 text-left sm:px-4">Winner</th>
+                    <th className="px-2 py-3 text-left sm:px-4">Owner</th>
+                    <th className="px-2 py-3 text-left sm:px-4">₹</th>
                   </tr>
                 </thead>
                 <tbody>

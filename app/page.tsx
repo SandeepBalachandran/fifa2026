@@ -30,21 +30,15 @@ export default async function WarRoomPage({
   const { competition = 'WC', season } = await searchParams;
   const seasonYear = season ? parseInt(season, 10) : undefined;
 
-  let compFixtures: Fixture[] = [];
-  let compError: string | null = null;
-
-  const [warRoomData, wcFixtures, standingsResult] = await Promise.all([
-    getWarRoomData(),
+  const [warRoomData, wcFixtures, compFixturesResult, standingsResult] = await Promise.all([
+    getWarRoomData().catch(() => ({ leader: null, topFive: [], upcomingBattles: [], recentBattles: [] })),
     fetchFixtures('WC').catch((): Fixture[] => []),
+    fetchFixtures(competition, undefined, seasonYear).catch((e: unknown) => ({ error: String(e) })),
     fetchStandings(competition, seasonYear).catch((e: unknown) => ({ error: String(e) })),
   ]);
 
-  try {
-    compFixtures = await fetchFixtures(competition, undefined, seasonYear);
-  } catch (e: unknown) {
-    compError = String(e);
-  }
-
+  const compFixtures: Fixture[] = Array.isArray(compFixturesResult) ? compFixturesResult : [];
+  const compError: string | null = Array.isArray(compFixturesResult) ? null : compFixturesResult.error;
   const standings = Array.isArray(standingsResult) ? standingsResult : [];
   const standingsError = Array.isArray(standingsResult) ? null : standingsResult.error;
 
