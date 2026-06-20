@@ -1,11 +1,13 @@
 export type MatchStatus = 'SCHEDULED' | 'TIMED' | 'IN_PLAY' | 'PAUSED' | 'FINISHED' | 'SUSPENDED' | 'CANCELLED';
 export type MatchStage =
+  | 'REGULAR_SEASON'
   | 'GROUP_STAGE'
   | 'LAST_16'
   | 'QUARTER_FINALS'
   | 'SEMI_FINALS'
   | 'THIRD_PLACE'
-  | 'FINAL';
+  | 'FINAL'
+  | (string & {});
 
 export interface Fixture {
   id: string;

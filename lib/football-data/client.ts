@@ -2,7 +2,25 @@ import type { Fixture, GroupStanding, MatchStage, MatchStatus, StandingEntry } f
 import type { TopScorer } from './scorer-types';
 
 const BASE_URL = 'https://api.football-data.org/v4';
-const COMPETITION = 'WC';
+
+export interface Competition {
+  id: number;
+  name: string;
+  code: string;
+  type: 'LEAGUE' | 'CUP';
+  emblem: string | null;
+  area: { name: string; flag: string | null };
+}
+
+export interface CompetitionSeason {
+  id: number;
+  startDate: string;
+  endDate: string;
+  /** The start year — used as the `season` query param in all competition endpoints */
+  year: number;
+  /** Human-friendly label e.g. "2024/25" or "2026" */
+  label: string;
+}
 
 function getApiKey(): string {
   const key = process.env.FOOTBALL_DATA_API_KEY;
@@ -44,18 +62,45 @@ function mapMatch(m: ApiMatch): Fixture {
   };
 }
 
-export async function fetchFixtures(matchday?: number): Promise<Fixture[]> {
-  const url = new URL(`${BASE_URL}/competitions/${COMPETITION}/matches`);
+export async function fetchCompetitions(): Promise<Competition[]> {
+  const res = await fetch(`${BASE_URL}/competitions`, {
+    headers: { 'X-Auth-Token': getApiKey() },
+    next: { revalidate: 3600 },
+  });
+  if (!res.ok) throw new Error(`Football Data API error: ${res.status} ${res.statusText}`);
+  const data = (await res.json()) as { competitions: Competition[] };
+  return data.competitions;
+}
+
+export async function fetchCompetitionSeasons(competition: string, limit = 10): Promise<CompetitionSeason[]> {
+  const res = await fetch(`${BASE_URL}/competitions/${competition}`, {
+    headers: { 'X-Auth-Token': getApiKey() },
+    next: { revalidate: 3600 },
+  });
+  if (!res.ok) throw new Error(`Football Data API error: ${res.status} ${res.statusText}`);
+  const data = (await res.json()) as {
+    seasons: Array<{ id: number; startDate: string; endDate: string }>;
+  };
+  return data.seasons.slice(0, limit).map((s) => {
+    const startYear = parseInt(s.startDate.split('-')[0], 10);
+    const endYear = parseInt(s.endDate.split('-')[0], 10);
+    const label = endYear > startYear ? `${startYear}/${String(endYear).slice(2)}` : String(startYear);
+    return { id: s.id, startDate: s.startDate, endDate: s.endDate, year: startYear, label };
+  });
+}
+
+export async function fetchFixtures(competition = 'WC', matchday?: number, season?: number): Promise<Fixture[]> {
+  const url = new URL(`${BASE_URL}/competitions/${competition}/matches`);
   if (matchday !== undefined) url.searchParams.set('matchday', String(matchday));
+  if (season !== undefined) url.searchParams.set('season', String(season));
 
   const res = await fetch(url.toString(), {
     headers: { 'X-Auth-Token': getApiKey() },
     next: { revalidate: 300 },
   });
 
-  if (!res.ok) {
-    throw new Error(`Football Data API error: ${res.status} ${res.statusText}`);
-  }
+  if (res.status === 403) throw new Error('Historical season data is not available on the current API plan.');
+  if (!res.ok) throw new Error(`Football Data API error: ${res.status} ${res.statusText}`);
 
   const data = (await res.json()) as { matches: ApiMatch[] };
   return data.matches.map(mapMatch);
@@ -110,8 +155,8 @@ function mapStandingEntry(e: ApiStandingEntry): StandingEntry {
   };
 }
 
-export async function fetchStandings(season?: number, matchday?: number): Promise<GroupStanding[]> {
-  const url = new URL(`${BASE_URL}/competitions/${COMPETITION}/standings`);
+export async function fetchStandings(competition = 'WC', season?: number, matchday?: number): Promise<GroupStanding[]> {
+  const url = new URL(`${BASE_URL}/competitions/${competition}/standings`);
   if (season !== undefined) url.searchParams.set('season', String(season));
   if (matchday !== undefined) url.searchParams.set('matchday', String(matchday));
 
@@ -120,9 +165,8 @@ export async function fetchStandings(season?: number, matchday?: number): Promis
     next: { revalidate: 300 },
   });
 
-  if (!res.ok) {
-    throw new Error(`Football Data API error: ${res.status} ${res.statusText}`);
-  }
+  if (res.status === 403) throw new Error('Historical season data is not available on the current API plan.');
+  if (!res.ok) throw new Error(`Football Data API error: ${res.status} ${res.statusText}`);
 
   const data = (await res.json()) as { standings: ApiGroupStanding[] };
   return data.standings
@@ -133,9 +177,10 @@ export async function fetchStandings(season?: number, matchday?: number): Promis
     }));
 }
 
-export async function fetchScorers(limit = 50): Promise<TopScorer[]> {
-  const url = new URL(`${BASE_URL}/competitions/${COMPETITION}/scorers`);
+export async function fetchScorers(competition = 'WC', limit = 50, season?: number): Promise<TopScorer[]> {
+  const url = new URL(`${BASE_URL}/competitions/${competition}/scorers`);
   url.searchParams.set('limit', String(limit));
+  if (season !== undefined) url.searchParams.set('season', String(season));
 
   const res = await fetch(url.toString(), {
     headers: { 'X-Auth-Token': getApiKey() },

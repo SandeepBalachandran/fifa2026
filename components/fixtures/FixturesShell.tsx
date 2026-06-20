@@ -3,19 +3,23 @@
 import { useState } from 'react';
 import { FixtureCard } from './FixtureCard';
 import { MatchDetailsDrawer } from '@/components/match-details/MatchDetailsDrawer';
+import { CompetitionSwitcher } from '@/components/CompetitionSwitcher';
+import { SeasonSwitcher } from '@/components/SeasonSwitcher';
 import type { Fixture } from '@/lib/football-data/types';
 import type { DirectBattle } from '@/lib/battles/types';
 
-const STAGE_ORDER = [
+const STAGE_PREFERRED_ORDER = [
+  'REGULAR_SEASON',
   'GROUP_STAGE',
   'LAST_16',
   'QUARTER_FINALS',
   'SEMI_FINALS',
   'THIRD_PLACE',
   'FINAL',
-] as const;
+];
 
 const STAGE_LABELS: Record<string, string> = {
+  REGULAR_SEASON: 'Regular Season',
   GROUP_STAGE:    'Group Stage',
   LAST_16:        'Round of 16',
   QUARTER_FINALS: 'Quarter-Finals',
@@ -24,15 +28,31 @@ const STAGE_LABELS: Record<string, string> = {
   FINAL:          'Final',
 };
 
+function formatStageLabel(stage: string): string {
+  return STAGE_LABELS[stage] ?? stage.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
 function groupByStage(fixtures: Fixture[]): [string, Fixture[]][] {
   const map = new Map<string, Fixture[]>();
-  for (const stage of STAGE_ORDER) {
-    const group = fixtures
-      .filter((f) => f.stage === stage)
-      .sort((a, b) => a.utcDate.localeCompare(b.utcDate));
-    if (group.length > 0) map.set(stage, group);
+  for (const f of fixtures) {
+    const group = map.get(f.stage) ?? [];
+    group.push(f);
+    map.set(f.stage, group);
   }
-  return Array.from(map.entries());
+  // Sort groups by preferred order; unknown stages go to end alphabetically
+  const entries = Array.from(map.entries()).sort(([a], [b]) => {
+    const ai = STAGE_PREFERRED_ORDER.indexOf(a);
+    const bi = STAGE_PREFERRED_ORDER.indexOf(b);
+    if (ai !== -1 && bi !== -1) return ai - bi;
+    if (ai !== -1) return -1;
+    if (bi !== -1) return 1;
+    return a.localeCompare(b);
+  });
+  // Sort fixtures within each group by date
+  return entries.map(([stage, group]) => [
+    stage,
+    group.sort((a, b) => a.utcDate.localeCompare(b.utcDate)),
+  ]);
 }
 
 interface FixturesShellProps {
@@ -52,9 +72,15 @@ export function FixturesShell({ fixtures, battles, ownership, fetchError }: Fixt
 
   return (
     <main className="mx-auto w-full max-w-2xl px-4 py-10">
-      <h1 className="mb-8 flex items-center gap-3 text-3xl font-black tracking-tight text-green-900 dark:text-green-100">
-        📅 Fixtures
-      </h1>
+      <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
+        <h1 className="flex items-center gap-3 text-3xl font-black tracking-tight text-green-900 dark:text-green-100">
+          📅 Fixtures
+        </h1>
+        <div className="flex items-center gap-2">
+          <CompetitionSwitcher />
+          <SeasonSwitcher />
+        </div>
+      </div>
 
       {fetchError && (
         <p className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-950 dark:text-red-400">
@@ -70,7 +96,7 @@ export function FixturesShell({ fixtures, battles, ownership, fetchError }: Fixt
         {grouped.map(([stage, stageFixtures]) => (
           <section key={stage}>
             <h2 className="mb-4 text-lg font-bold text-gray-700 dark:text-gray-300">
-              {STAGE_LABELS[stage] ?? stage}
+              {formatStageLabel(stage)}
             </h2>
             <div className="flex flex-col gap-3">
               {stageFixtures.map((fixture) => (

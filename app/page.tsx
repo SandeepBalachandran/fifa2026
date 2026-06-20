@@ -1,10 +1,14 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import { Suspense } from 'react';
 import { getWarRoomData } from '@/lib/war-room/data';
 import { BattleCard } from '@/components/battles/BattleCard';
 import { getBetLabel } from '@/lib/bet-tracker/config';
 import { fetchFixtures, fetchStandings } from '@/lib/football-data/client';
 import { calculateBetStats } from '@/lib/bet-tracker/calculate';
+import { CompetitionSwitcher } from '@/components/CompetitionSwitcher';
+import { SeasonSwitcher } from '@/components/SeasonSwitcher';
+import { PlanUpgradeBanner } from '@/components/PlanUpgradeBanner';
 import type { Fixture, StandingEntry } from '@/lib/football-data/types';
 
 function WRCrest({ src, name, size = 18 }: { src: string | null; name: string; size?: number }) {
@@ -18,22 +22,51 @@ function BetLabel({ name }: { name: string }) {
   return <span className="shrink-0 text-xs font-bold text-amber-500 dark:text-amber-400">{label}</span>;
 }
 
-export default async function WarRoomPage() {
-  const [warRoomData, allFixtures, standings] = await Promise.all([
+export default async function WarRoomPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ competition?: string; season?: string }>;
+}) {
+  const { competition = 'WC', season } = await searchParams;
+  const seasonYear = season ? parseInt(season, 10) : undefined;
+
+  let compFixtures: Fixture[] = [];
+  let compError: string | null = null;
+
+  const [warRoomData, wcFixtures, standingsResult] = await Promise.all([
     getWarRoomData(),
-    fetchFixtures().catch((): Fixture[] => []),
-    fetchStandings(2026).catch(() => []),
+    fetchFixtures('WC').catch((): Fixture[] => []),
+    fetchStandings(competition, seasonYear).catch((e: unknown) => ({ error: String(e) })),
   ]);
 
-  const { leader, topFive, upcomingFixtures, recentResults, upcomingBattles, recentBattles } = warRoomData;
-  const { sandy, rahul } = calculateBetStats(allFixtures);
+  try {
+    compFixtures = await fetchFixtures(competition, undefined, seasonYear);
+  } catch (e: unknown) {
+    compError = String(e);
+  }
+
+  const standings = Array.isArray(standingsResult) ? standingsResult : [];
+  const standingsError = Array.isArray(standingsResult) ? null : standingsResult.error;
+
+  const { leader, topFive, upcomingBattles, recentBattles } = warRoomData;
+  const { sandy, rahul } = calculateBetStats(wcFixtures);
 
   const betLeader =
     sandy.wins > rahul.wins ? { name: 'Sandy', wins: sandy.wins, amount: sandy.amount } :
     rahul.wins > sandy.wins ? { name: 'Rahul', wins: rahul.wins, amount: rahul.amount } :
     null;
 
-  const topWcTeams: StandingEntry[] = standings
+  const upcomingFixtures = compFixtures
+    .filter((f) => f.status === 'SCHEDULED' || f.status === 'TIMED' || f.status === 'IN_PLAY')
+    .sort((a, b) => a.utcDate.localeCompare(b.utcDate))
+    .slice(0, 6);
+
+  const recentResults = compFixtures
+    .filter((f) => f.status === 'FINISHED')
+    .sort((a, b) => b.utcDate.localeCompare(a.utcDate))
+    .slice(0, 5);
+
+  const topTeams: StandingEntry[] = standings
     .flatMap((g) => g.table)
     .sort((a, b) =>
       b.points - a.points ||
@@ -44,9 +77,17 @@ export default async function WarRoomPage() {
 
   return (
     <main className="mx-auto w-full max-w-5xl px-4 py-8">
-      <h1 className="mb-6 flex items-center gap-3 text-3xl font-black tracking-tight text-green-900 dark:text-green-100">
-        🏟 War Room
-      </h1>
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+        <h1 className="flex items-center gap-3 text-3xl font-black tracking-tight text-green-900 dark:text-green-100">
+          🏟 War Room
+        </h1>
+        <Suspense fallback={<div className="h-9 w-48 animate-pulse rounded-lg bg-green-100 dark:bg-green-900/30" />}>
+          <div className="flex items-center gap-2">
+            <CompetitionSwitcher />
+            <SeasonSwitcher />
+          </div>
+        </Suspense>
+      </div>
 
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
 
@@ -128,15 +169,21 @@ export default async function WarRoomPage() {
               </table>
             )}
 
-            {/* Top 5 WC Teams */}
-            {topWcTeams.length > 0 && (
+            {/* Top 5 Teams */}
+            {standingsError && (
+              <div className="border-t border-gray-100 px-5 py-4 dark:border-gray-800">
+                <p className="mb-3 text-xs font-bold uppercase tracking-widest text-gray-400">🌍 Top 5 Teams</p>
+                <PlanUpgradeBanner />
+              </div>
+            )}
+            {!standingsError && topTeams.length > 0 && (
               <div className="border-t border-gray-100 px-5 py-4 dark:border-gray-800">
                 <p className="mb-3 text-xs font-bold uppercase tracking-widest text-gray-400">
-                  🌍 Top 5 WC Teams
+                  🌍 Top 5 Teams
                 </p>
                 <table className="w-full text-xs">
                   <tbody>
-                    {topWcTeams.map((entry, i) => (
+                    {topTeams.map((entry, i) => (
                       <tr key={entry.team.id} className="border-b border-gray-50 last:border-0 dark:border-gray-800">
                         <td className="py-1.5 pr-2 font-bold text-gray-400">{i + 1}</td>
                         <td className="py-1.5">
@@ -172,7 +219,9 @@ export default async function WarRoomPage() {
             </Link>
           </div>
           <div className="bg-white px-4 py-4 dark:bg-gray-900">
-            {upcomingFixtures.length === 0 ? (
+            {compError ? (
+              <PlanUpgradeBanner />
+            ) : upcomingFixtures.length === 0 ? (
               <p className="text-sm text-gray-400">No upcoming fixtures.</p>
             ) : (
               <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
@@ -216,7 +265,9 @@ export default async function WarRoomPage() {
             </p>
           </div>
           <div className="bg-white px-4 py-4 dark:bg-gray-900">
-            {recentResults.length === 0 ? (
+            {compError ? (
+              <PlanUpgradeBanner />
+            ) : recentResults.length === 0 ? (
               <p className="text-sm text-gray-400">No results yet.</p>
             ) : (
               <ul className="space-y-2">

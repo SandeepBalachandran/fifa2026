@@ -1,6 +1,9 @@
 import Image from 'next/image';
 import { fetchScorers } from '@/lib/football-data/client';
 import { getBetLabel, BET_OWNERSHIP } from '@/lib/bet-tracker/config';
+import { CompetitionSwitcher } from '@/components/CompetitionSwitcher';
+import { SeasonSwitcher } from '@/components/SeasonSwitcher';
+import { PlanUpgradeBanner } from '@/components/PlanUpgradeBanner';
 import type { TopScorer } from '@/lib/football-data/scorer-types';
 
 function Crest({ src, name, size = 24 }: { src: string | null; name: string; size?: number }) {
@@ -101,12 +104,18 @@ function OwnerTallyBar({ sandy, rahul, unowned }: { sandy: number; rahul: number
 
 // ── Page ───────────────────────────────────────────────────────────────────────
 
-export default async function ScorersPage() {
+export default async function ScorersPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ competition?: string; season?: string }>;
+}) {
+  const { competition = 'WC', season } = await searchParams;
+  const seasonYear = season ? parseInt(season, 10) : undefined;
   let scorers: TopScorer[] = [];
   let fetchError: string | null = null;
 
   try {
-    scorers = await fetchScorers(50);
+    scorers = await fetchScorers(competition, 50, seasonYear);
   } catch (err) {
     fetchError = String(err);
   }
@@ -115,18 +124,22 @@ export default async function ScorersPage() {
 
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-10">
-      <h1 className="mb-2 flex items-center gap-3 text-3xl font-black tracking-tight text-green-900 dark:text-green-100">
-        ⚽ Top Scorers
-      </h1>
-      <p className="mb-8 text-sm text-gray-500 dark:text-gray-400">
-        Golden Boot — World Cup 2026
-      </p>
-
-      {fetchError && (
-        <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-950 dark:text-red-400">
-          Failed to load scorers: {fetchError}
+      <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="flex items-center gap-3 text-3xl font-black tracking-tight text-green-900 dark:text-green-100">
+            ⚽ Top Scorers
+          </h1>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            Golden Boot ranking
+          </p>
         </div>
-      )}
+        <div className="flex items-center gap-2">
+          <CompetitionSwitcher />
+          <SeasonSwitcher />
+        </div>
+      </div>
+
+      {fetchError && <PlanUpgradeBanner />}
 
       {!fetchError && scorers.length === 0 && (
         <p className="text-sm text-gray-400">No scorers available yet — check back once matches begin.</p>
@@ -137,16 +150,15 @@ export default async function ScorersPage() {
           <OwnerTallyBar {...tally} />
 
           <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-900">
-            <div className="overflow-x-auto">
-              <div className="min-w-[400px]">
+            <div>
                 {/* Table header */}
-                <div className="grid grid-cols-[36px_1fr_64px_64px_64px_64px] items-center border-b border-gray-100 bg-gray-50 px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-400 dark:border-gray-800 dark:bg-gray-800/60">
+                <div className="grid grid-cols-[32px_1fr_56px] items-center border-b border-gray-100 bg-gray-50 px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-400 dark:border-gray-800 dark:bg-gray-800/60 sm:grid-cols-[36px_1fr_64px_64px_64px_64px] sm:px-4">
                   <span>#</span>
                   <span>Player</span>
                   <span className="text-center">Goals</span>
-                  <span className="text-center">Ast</span>
-                  <span className="text-center">Pen</span>
-                  <span className="text-center">MP</span>
+                  <span className="hidden text-center sm:block">Ast</span>
+                  <span className="hidden text-center sm:block">Pen</span>
+                  <span className="hidden text-center sm:block">MP</span>
                 </div>
 
                 {scorers.map((s, i) => {
@@ -161,7 +173,7 @@ export default async function ScorersPage() {
                   return (
                     <div
                       key={`${s.player.id}-${i}`}
-                      className={`grid grid-cols-[36px_1fr_64px_64px_64px_64px] items-center border-b border-gray-50 px-4 py-3 last:border-0 dark:border-gray-800 ${rowBg}`}
+                      className={`grid grid-cols-[32px_1fr_56px] items-center border-b border-gray-50 px-3 py-3 last:border-0 dark:border-gray-800 sm:grid-cols-[36px_1fr_64px_64px_64px_64px] sm:px-4 ${rowBg}`}
                     >
                       {/* Rank */}
                       <div className="flex items-center">
@@ -173,7 +185,7 @@ export default async function ScorersPage() {
                         <p className="truncate font-bold text-gray-900 dark:text-white">
                           {s.player.name}
                         </p>
-                        <div className="mt-0.5 flex items-center gap-1.5">
+                        <div className="mt-0.5 flex flex-wrap items-center gap-1">
                           <Crest src={s.team.crest} name={s.team.name} size={16} />
                           <span className="truncate text-xs text-gray-500 dark:text-gray-400">
                             {s.team.shortName || s.team.name}
@@ -184,7 +196,7 @@ export default async function ScorersPage() {
                             </span>
                           )}
                           {s.player.nationality && (
-                            <span className="shrink-0 text-xs text-gray-400 dark:text-gray-500">
+                            <span className="hidden shrink-0 text-xs text-gray-400 dark:text-gray-500 sm:inline">
                               · {s.player.nationality}
                             </span>
                           )}
@@ -192,13 +204,12 @@ export default async function ScorersPage() {
                       </div>
 
                       <StatCell value={s.goals}        label="Goals" />
-                      <StatCell value={s.assists}      label="Ast"   />
-                      <StatCell value={s.penalties}    label="Pen"   />
-                      <StatCell value={s.playedMatches} label="MP"   />
+                      <div className="hidden sm:block"><StatCell value={s.assists}      label="Ast"   /></div>
+                      <div className="hidden sm:block"><StatCell value={s.penalties}    label="Pen"   /></div>
+                      <div className="hidden sm:block"><StatCell value={s.playedMatches} label="MP"  /></div>
                     </div>
                   );
                 })}
-              </div>
             </div>
           </div>
         </>
