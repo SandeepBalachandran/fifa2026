@@ -19,17 +19,20 @@ function age(dob: string): number {
 interface PlayerPanelProps {
   personId: number | null;
   onBack: () => void;
+  hideBackButton?: boolean;
 }
 
-export function PlayerPanel({ personId, onBack }: PlayerPanelProps) {
+export function PlayerPanel({ personId, onBack, hideBackButton = false }: PlayerPanelProps) {
   const { data, loading, error } = usePersonDetail(personId);
 
   if (loading) {
     return (
       <div className="flex flex-col gap-4 p-5">
-        <button onClick={onBack} className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 w-fit">
-          ← Back
-        </button>
+        {!hideBackButton && (
+          <button onClick={onBack} className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 w-fit">
+            ← Back
+          </button>
+        )}
         {[...Array(4)].map((_, i) => (
           <div key={i} className="h-12 animate-pulse rounded-xl bg-gray-200 dark:bg-gray-700" />
         ))}
@@ -42,9 +45,11 @@ export function PlayerPanel({ personId, onBack }: PlayerPanelProps) {
       <div className="flex flex-col items-center gap-4 px-5 py-16 text-center">
         <span className="text-4xl">⚠️</span>
         <p className="font-semibold text-gray-700 dark:text-gray-300">Could not load player details.</p>
-        <button onClick={onBack} className="text-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-          ← Back
-        </button>
+        {!hideBackButton && (
+          <button onClick={onBack} className="text-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+            ← Back
+          </button>
+        )}
       </div>
     );
   }
@@ -57,12 +62,14 @@ export function PlayerPanel({ personId, onBack }: PlayerPanelProps) {
 
   return (
     <div className="flex flex-col gap-5 p-4">
-      <button
-        onClick={onBack}
-        className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 w-fit"
-      >
-        ← Back to match
-      </button>
+      {!hideBackButton && (
+        <button
+          onClick={onBack}
+          className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 w-fit"
+        >
+          ← Back to match
+        </button>
+      )}
 
       {/* Player card */}
       <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
