@@ -41,11 +41,11 @@ function TeamCrest({ src, name, size = 56 }: { src: string | null; name: string;
 // ── Score header ───────────────────────────────────────────────────────────────
 
 function ScoreHeader({ match }: { match: MatchDetail }) {
-  const { home, away } = match.score.fullTime;
-  const { home: htHome, away: htAway } = match.score.halfTime;
+  const { home, away } = match.score?.fullTime ?? { home: null, away: null };
+  const { home: htHome, away: htAway } = match.score?.halfTime ?? { home: null, away: null };
   const isFinished = match.status === 'FINISHED';
   const isLive = match.status === 'IN_PLAY' || match.status === 'PAUSED';
-  const duration = match.score.duration;
+  const duration = match.score?.duration;
   const durationLabel = duration && duration !== 'REGULAR' ? DURATION_LABEL[duration] : null;
 
   const homeBet = getBetLabel(match.homeTeam.name);

@@ -11,6 +11,7 @@ import type { DirectBattle } from '@/lib/battles/types';
 const STAGE_PREFERRED_ORDER = [
   'REGULAR_SEASON',
   'GROUP_STAGE',
+  'LAST_32',
   'LAST_16',
   'QUARTER_FINALS',
   'SEMI_FINALS',
@@ -21,6 +22,7 @@ const STAGE_PREFERRED_ORDER = [
 const STAGE_LABELS: Record<string, string> = {
   REGULAR_SEASON: 'Regular Season',
   GROUP_STAGE:    'Group Stage',
+  LAST_32:        'Round of 32',
   LAST_16:        'Round of 16',
   QUARTER_FINALS: 'Quarter-Finals',
   SEMI_FINALS:    'Semi-Finals',
