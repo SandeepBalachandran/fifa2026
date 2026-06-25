@@ -6,6 +6,7 @@ import { useMatchDetails } from '@/hooks/useMatchDetails';
 import { GoalsList } from './GoalsList';
 import { BookingsList } from './BookingsList';
 import { Head2HeadSection } from './Head2HeadSection';
+import { PlayerPanel } from './PlayerPanel';
 import { getBetLabel } from '@/lib/bet-tracker/config';
 import type { MatchDetail, MatchDuration } from '@/lib/football-data/match-types';
 
@@ -111,6 +112,19 @@ function ScoreHeader({ match }: { match: MatchDetail }) {
 
 function DrawerContent({ matchId, onClose }: { matchId: string | null; onClose: () => void }) {
   const { data, loading, error, retry } = useMatchDetails(matchId);
+  const [selectedPlayer, setSelectedPlayer] = useState<{ id: number; name: string } | null>(null);
+
+  // Reset player selection when match changes
+  useEffect(() => { setSelectedPlayer(null); }, [matchId]);
+
+  if (selectedPlayer) {
+    return (
+      <PlayerPanel
+        personId={selectedPlayer.id}
+        onBack={() => setSelectedPlayer(null)}
+      />
+    );
+  }
 
   if (loading) return <DrawerSkeleton />;
 
@@ -148,7 +162,11 @@ function DrawerContent({ matchId, onClose }: { matchId: string | null; onClose: 
         <h3 className="mb-3 text-xs font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">
           Goals
         </h3>
-        <GoalsList goals={goals} homeTeamId={data.homeTeam.id} />
+        <GoalsList
+          goals={goals}
+          homeTeamId={data.homeTeam.id}
+          onScorerClick={(id, name) => setSelectedPlayer({ id, name })}
+        />
       </section>
 
       {/* Cards */}
@@ -258,7 +276,7 @@ export function MatchDetailsDrawer({ matchId, onClose }: MatchDetailsDrawerProps
           fixed bottom-0 left-0 right-0 z-50 flex flex-col
           h-[88vh] rounded-t-2xl bg-gray-50 shadow-2xl dark:bg-gray-950
           transition-transform duration-300 ease-out
-          sm:bottom-auto sm:top-0 sm:left-auto sm:right-0 sm:h-full sm:w-[480px] sm:rounded-none sm:rounded-l-2xl
+          sm:bottom-auto sm:top-0 sm:left-auto sm:right-0 sm:h-full sm:w-120 sm:rounded-none sm:rounded-l-2xl
           ${visible ? 'translate-y-0 sm:translate-x-0 sm:translate-y-0' : 'translate-y-full sm:translate-x-full sm:translate-y-0'}
         `}
       >

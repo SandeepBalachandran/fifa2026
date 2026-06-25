@@ -22,9 +22,10 @@ const GOAL_TYPE_LABEL: Record<string, string> = {
 interface GoalsListProps {
   goals: Goal[];
   homeTeamId: number;
+  onScorerClick?: (id: number, name: string) => void;
 }
 
-export function GoalsList({ goals, homeTeamId }: GoalsListProps) {
+export function GoalsList({ goals, homeTeamId, onScorerClick }: GoalsListProps) {
   if (!goals || goals.length === 0) {
     return <p className="text-sm text-gray-400">No goals recorded.</p>;
   }
@@ -35,11 +36,13 @@ export function GoalsList({ goals, homeTeamId }: GoalsListProps) {
         const isHome = goal.team.id === homeTeamId;
         const badgeCls = GOAL_TYPE_BADGE[goal.type];
         const typeLabel = GOAL_TYPE_LABEL[goal.type];
+        const scorerName = goal.scorer?.name ?? goal.team.name;
+        const canClick = !!goal.scorer?.id && !!onScorerClick;
 
         return (
           <li key={i} className={`flex items-start gap-3 ${isHome ? '' : 'flex-row-reverse'}`}>
             {/* Minute */}
-            <span className="w-12 shrink-0 text-xs font-bold text-gray-400 dark:text-gray-500 mt-0.5 text-right">
+            <span className="w-10 shrink-0 text-xs font-bold text-gray-400 dark:text-gray-500 mt-0.5 text-right">
               {goalMinute(goal)}
             </span>
 
@@ -49,9 +52,18 @@ export function GoalsList({ goals, homeTeamId }: GoalsListProps) {
             {/* Scorer info */}
             <div className={`min-w-0 flex-1 ${isHome ? '' : 'text-right'}`}>
               <div className={`flex items-center gap-1.5 flex-wrap ${isHome ? '' : 'justify-end'}`}>
-                <span className="font-semibold text-sm text-gray-900 dark:text-white">
-                  {goal.scorer?.name ?? goal.team.name}
-                </span>
+                {canClick ? (
+                  <button
+                    onClick={() => onScorerClick(goal.scorer!.id, goal.scorer!.name)}
+                    className="font-semibold text-sm text-green-700 underline underline-offset-2 decoration-dotted hover:text-green-600 dark:text-green-400 dark:hover:text-green-300"
+                  >
+                    {scorerName}
+                  </button>
+                ) : (
+                  <span className="font-semibold text-sm text-gray-900 dark:text-white">
+                    {scorerName}
+                  </span>
+                )}
                 {typeLabel && (
                   <span className={`rounded px-1.5 py-0.5 text-[10px] font-bold ${badgeCls}`}>
                     {typeLabel}
@@ -60,7 +72,17 @@ export function GoalsList({ goals, homeTeamId }: GoalsListProps) {
               </div>
               {goal.assist && (
                 <p className="text-xs text-gray-400 dark:text-gray-500">
-                  Assist: {goal.assist.name}
+                  Assist:{' '}
+                  {goal.assist.id && onScorerClick ? (
+                    <button
+                      onClick={() => onScorerClick(goal.assist!.id, goal.assist!.name)}
+                      className="text-xs text-green-600 underline underline-offset-2 decoration-dotted hover:text-green-500 dark:text-green-400"
+                    >
+                      {goal.assist.name}
+                    </button>
+                  ) : (
+                    goal.assist.name
+                  )}
                 </p>
               )}
             </div>

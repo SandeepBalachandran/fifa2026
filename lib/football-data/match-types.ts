@@ -88,6 +88,6 @@ export interface H2HMatch {
 }
 
 export interface Head2HeadResult {
-  head2head: H2HSummary;
+  aggregates: H2HSummary;
   matches: H2HMatch[];
 }

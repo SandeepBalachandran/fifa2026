@@ -50,7 +50,7 @@ export function CompetitionSwitcher() {
         value={current}
         onChange={(e) => handleChange(e.target.value)}
         disabled={isPending}
-        className="max-w-[160px] rounded-lg border border-green-200 bg-white px-3 py-1.5 text-sm font-medium text-green-900 shadow-sm transition-opacity disabled:opacity-50 dark:border-green-800 dark:bg-gray-900 dark:text-green-100 sm:max-w-none"
+        className="w-36 rounded-lg border border-green-200 bg-white px-3 py-1.5 text-sm font-medium text-green-900 shadow-sm transition-opacity disabled:opacity-50 dark:border-green-800 dark:bg-gray-900 dark:text-green-100 sm:w-auto"
       >
         {competitions.map((c) => (
           <option key={c.code} value={c.code}>

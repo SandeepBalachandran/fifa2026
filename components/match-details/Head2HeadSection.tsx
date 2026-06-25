@@ -124,11 +124,11 @@ export function Head2HeadSection({ matchId }: Head2HeadSectionProps) {
     return <p className="text-xs text-gray-400">Could not load head-to-head data.</p>;
   }
 
-  if (!data || data.head2head.numberOfMatches === 0) {
+  if (!data || data.aggregates.numberOfMatches === 0) {
     return <p className="text-xs text-gray-400">No previous meetings found.</p>;
   }
 
-  const { head2head, matches } = data;
+  const { aggregates: head2head, matches } = data;
 
   return (
     <div className="flex flex-col gap-3">

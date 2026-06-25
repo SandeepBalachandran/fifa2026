@@ -20,15 +20,11 @@ export const metadata: Metadata = {
 };
 
 const NAV_LINKS = [
-  { href: "/",              label: "War Room",      icon: "🏟" },
-  { href: "/leaderboard",   label: "Leaderboard",   icon: "🏆" },
-  { href: "/fixtures",      label: "Fixtures",      icon: "📅" },
-  { href: "/scorers",       label: "Scorers",       icon: "⚽" },
-  // { href: "/battles",       label: "Battles",       icon: "⚔️" },
-  // { href: "/draft",         label: "Draft",         icon: "📋" },
-  // { href: "/notifications", label: "Notifications", icon: "🔔" },
-  // { href: "/admin",         label: "Admin",         icon: "⚙️" },
-  { href: "/bet-tracker",   label: "Bet Tracker",   icon: "🎯" },
+  { href: "/",              label: "War Room",    shortLabel: "Home",    icon: "🏟" },
+  { href: "/leaderboard",   label: "Leaderboard", shortLabel: "Ranks",   icon: "🏆" },
+  { href: "/fixtures",      label: "Fixtures",    shortLabel: "Games",   icon: "📅" },
+  { href: "/scorers",       label: "Scorers",     shortLabel: "Goals",   icon: "⚽" },
+  { href: "/bet-tracker",   label: "Bet Tracker", shortLabel: "Bets",    icon: "🎯" },
 ];
 
 export default function RootLayout({
@@ -88,14 +84,14 @@ export default function RootLayout({
 
         {/* Mobile bottom tab bar */}
         <nav className="fixed bottom-0 left-0 right-0 z-50 flex border-t border-green-900/80 bg-green-950 sm:hidden">
-          {NAV_LINKS.map(({ href, label, icon }) => (
+          {NAV_LINKS.map(({ href, shortLabel, icon }) => (
             <Link
               key={href}
               href={href}
-              className="flex flex-1 flex-col items-center justify-center gap-0.5 py-3 text-green-400 transition-colors hover:text-white active:text-amber-400"
+              className="flex flex-1 flex-col items-center justify-center gap-0.5 py-2.5 text-green-400 transition-colors hover:text-white active:text-amber-400"
             >
-              <span className="text-xl leading-none">{icon}</span>
-              <span className="text-[10px] font-semibold leading-none">{label}</span>
+              <span className="text-2xl leading-none">{icon}</span>
+              <span className="text-[10px] font-semibold leading-none tracking-tight">{shortLabel}</span>
             </Link>
           ))}
         </nav>

@@ -33,17 +33,17 @@ export function BookingsList({ bookings }: BookingsListProps) {
         return (
           <li
             key={i}
-            className={`flex items-center gap-3 rounded-xl px-3 py-2 ${style.cls}`}
+            className={`flex items-center gap-2 rounded-xl px-3 py-2.5 ${style.cls}`}
           >
             <span className="text-base leading-none">{style.icon}</span>
-            <span className="w-12 shrink-0 text-xs font-bold text-gray-400">
+            <span className="w-10 shrink-0 text-xs font-bold text-gray-400">
               {bookingMinute(b)}
             </span>
             <TeamCrest team={b.team} size={16} />
             <span className="min-w-0 flex-1 truncate text-sm font-semibold text-gray-900 dark:text-white">
               {b.player.name}
             </span>
-            <span className="shrink-0 text-xs text-gray-400">{b.team.shortName || b.team.name}</span>
+            <span className="hidden shrink-0 text-xs text-gray-400 sm:inline">{b.team.shortName || b.team.name}</span>
           </li>
         );
       })}
