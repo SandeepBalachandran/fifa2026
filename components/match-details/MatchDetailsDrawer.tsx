@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { Component, useEffect, useRef, useState } from 'react';
+import type { ReactNode, ErrorInfo } from 'react';
 import Image from 'next/image';
 import { useMatchDetails } from '@/hooks/useMatchDetails';
 import { GoalsList } from './GoalsList';
@@ -9,6 +10,42 @@ import { Head2HeadSection } from './Head2HeadSection';
 import { PlayerPanel } from './PlayerPanel';
 import { getBetLabel } from '@/lib/bet-tracker/config';
 import type { MatchDetail, MatchDuration } from '@/lib/football-data/match-types';
+
+// ── Error boundary ─────────────────────────────────────────────────────────────
+
+class DrawerErrorBoundary extends Component<
+  { children: ReactNode; onClose: () => void },
+  { hasError: boolean; message: string }
+> {
+  constructor(props: { children: ReactNode; onClose: () => void }) {
+    super(props);
+    this.state = { hasError: false, message: '' };
+  }
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, message: error.message };
+  }
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    console.error('[MatchDetailsDrawer]', error, info);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="flex flex-col items-center justify-center gap-4 px-5 py-16 text-center">
+          <span className="text-4xl">⚠️</span>
+          <p className="font-semibold text-gray-700 dark:text-gray-300">Unable to load match details.</p>
+          <p className="text-xs text-gray-400 max-w-xs break-words">{this.state.message}</p>
+          <button
+            onClick={this.props.onClose}
+            className="rounded-xl bg-green-600 px-5 py-2 text-sm font-semibold text-white hover:bg-green-700"
+          >
+            Close
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
@@ -33,9 +70,9 @@ const DURATION_LABEL: Record<MatchDuration, string> = {
   PENALTY_SHOOTOUT: 'After Penalties',
 };
 
-function TeamCrest({ src, name, size = 56 }: { src: string | null; name: string; size?: number }) {
+function TeamCrest({ src, name, size = 56 }: { src: string | null; name: string | null; size?: number }) {
   if (!src) return <span className="inline-block shrink-0 rounded-full bg-gray-100 dark:bg-gray-800" style={{ width: size, height: size }} />;
-  return <Image src={src} alt={name} width={size} height={size} className="shrink-0 object-contain" unoptimized />;
+  return <Image src={src} alt={name ?? ''} width={size} height={size} className="shrink-0 object-contain" unoptimized />;
 }
 
 // ── Score header ───────────────────────────────────────────────────────────────
@@ -48,17 +85,19 @@ function ScoreHeader({ match }: { match: MatchDetail }) {
   const duration = match.score?.duration;
   const durationLabel = duration && duration !== 'REGULAR' ? DURATION_LABEL[duration] : null;
 
-  const homeBet = getBetLabel(match.homeTeam.name);
-  const awayBet = getBetLabel(match.awayTeam.name);
+  const homeName = match.homeTeam?.name ?? null;
+  const awayName = match.awayTeam?.name ?? null;
+  const homeBet = getBetLabel(homeName ?? '');
+  const awayBet = getBetLabel(awayName ?? '');
 
   return (
     <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
       <div className="flex items-center gap-3">
         {/* Home */}
         <div className="flex flex-1 flex-col items-center gap-1.5">
-          <TeamCrest src={match.homeTeam.crest} name={match.homeTeam.name} />
+          <TeamCrest src={match.homeTeam?.crest ?? null} name={homeName} />
           <p className="text-center text-sm font-bold text-gray-900 dark:text-white leading-tight">
-            {match.homeTeam.shortName || match.homeTeam.name}
+            {match.homeTeam?.shortName || homeName || 'TBD'}
           </p>
           {homeBet && <span className="text-xs font-bold text-amber-500">{homeBet}</span>}
         </div>
@@ -91,9 +130,9 @@ function ScoreHeader({ match }: { match: MatchDetail }) {
 
         {/* Away */}
         <div className="flex flex-1 flex-col items-center gap-1.5">
-          <TeamCrest src={match.awayTeam.crest} name={match.awayTeam.name} />
+          <TeamCrest src={match.awayTeam?.crest ?? null} name={awayName} />
           <p className="text-center text-sm font-bold text-gray-900 dark:text-white leading-tight">
-            {match.awayTeam.shortName || match.awayTeam.name}
+            {match.awayTeam?.shortName || awayName || 'TBD'}
           </p>
           {awayBet && <span className="text-xs font-bold text-amber-500">{awayBet}</span>}
         </div>
@@ -164,7 +203,7 @@ function DrawerContent({ matchId, onClose }: { matchId: string | null; onClose: 
         </h3>
         <GoalsList
           goals={goals}
-          homeTeamId={data.homeTeam.id}
+          homeTeamId={data.homeTeam?.id ?? 0}
           onScorerClick={(id, name) => setSelectedPlayer({ id, name })}
         />
       </section>
@@ -290,7 +329,9 @@ export function MatchDetailsDrawer({ matchId, onClose }: MatchDetailsDrawerProps
           </button>
         </div>
         <div className="flex-1 overflow-y-auto">
-          <DrawerContent matchId={matchId} onClose={onClose} />
+          <DrawerErrorBoundary onClose={onClose}>
+            <DrawerContent matchId={matchId} onClose={onClose} />
+          </DrawerErrorBoundary>
         </div>
       </div>
     </>
