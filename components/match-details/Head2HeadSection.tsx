@@ -124,14 +124,17 @@ export function Head2HeadSection({ matchId }: Head2HeadSectionProps) {
     return <p className="text-xs text-gray-400">Could not load head-to-head data.</p>;
   }
 
-  if (!data || data.aggregates.numberOfMatches === 0) {
-    return <p className="text-xs text-gray-400">No previous meetings found.</p>;
+  if (!data || !data.aggregates || data.aggregates.numberOfMatches === 0) {
+    return null;
   }
 
   const { aggregates: head2head, matches } = data;
 
   return (
     <div className="flex flex-col gap-3">
+      <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+        Head to Head
+      </h3>
       {/* Summary stats */}
       <div className="rounded-xl border border-gray-100 bg-white p-3 dark:border-gray-800 dark:bg-gray-900">
         <div className="mb-3 flex justify-between text-center text-xs text-gray-500 dark:text-gray-400">

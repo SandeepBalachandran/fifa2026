@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { FixtureCard } from './FixtureCard';
 import { MatchDetailsDrawer } from '@/components/match-details/MatchDetailsDrawer';
 import { CompetitionSwitcher } from '@/components/CompetitionSwitcher';
@@ -72,6 +72,30 @@ export function FixturesShell({ fixtures, battles, ownership, fetchError }: Fixt
   );
   const grouped = groupByStage(fixtures);
 
+  // Find the first fixture that is live, or within the last 2 hours, or in the future
+  const anchorId = useMemo(() => {
+    const cutoff = Date.now() - 2 * 60 * 60 * 1000;
+    const flat = fixtures
+      .slice()
+      .sort((a, b) => a.utcDate.localeCompare(b.utcDate));
+    return flat.find(
+      (f) =>
+        f.status === 'IN_PLAY' ||
+        f.status === 'PAUSED' ||
+        new Date(f.utcDate).getTime() >= cutoff
+    )?.id ?? null;
+  }, [fixtures]);
+
+  const anchorRef = useRef<HTMLButtonElement | null>(null);
+  useEffect(() => {
+    if (!anchorRef.current) return;
+    // Small delay lets the page paint first before scrolling
+    const timer = setTimeout(() => {
+      anchorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 120);
+    return () => clearTimeout(timer);
+  }, [anchorId]);
+
   return (
     <main className="mx-auto w-full max-w-2xl px-4 py-10">
       <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
@@ -104,6 +128,7 @@ export function FixturesShell({ fixtures, battles, ownership, fetchError }: Fixt
               {stageFixtures.map((fixture) => (
                 <button
                   key={fixture.id}
+                  ref={fixture.id === anchorId ? anchorRef : null}
                   onClick={() => setSelectedMatchId(fixture.id)}
                   className="w-full text-left"
                   aria-label={`View details for ${fixture.homeTeam.name} vs ${fixture.awayTeam.name}`}

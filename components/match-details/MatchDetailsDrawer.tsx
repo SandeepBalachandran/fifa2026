@@ -249,13 +249,8 @@ function DrawerContent({ matchId, onClose }: { matchId: string | null; onClose: 
         </p>
       )}
 
-      {/* Head to head */}
-      <section>
-        <h3 className="mb-3 text-xs font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">
-          Head to Head
-        </h3>
-        <Head2HeadSection matchId={String(data.id)} />
-      </section>
+      {/* Head to head — section rendered by Head2HeadSection itself when data exists */}
+      <Head2HeadSection matchId={String(data.id)} />
     </div>
   );
 }
