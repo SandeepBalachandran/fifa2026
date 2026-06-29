@@ -19,37 +19,37 @@ export const BET_OWNERSHIP: Record<string, BetParticipant> = {
   'South Africa':        'Sandy',
   // Group B — #1+#4 pair
   Switzerland:           'Sandy',
-  'Bosnia and Herzegovina': 'Sandy',
+  'Bosnia-Herzegovina':  'Sandy',  // API may use "Bosnia and Herzegovina"
   // Group C — #1+#4 pair (Brazil)
   Brazil:                'Sandy',
   Haiti:                 'Sandy',
   // Group D — #2+#3 pair
   Australia:             'Sandy',
-  Turkey:                'Rahul',  // API may use "Türkiye"
+  Turkey:                'Sandy',  // API may use "Türkiye"
   // Group E — #2+#3 pair
-  Ecuador:               'Rahul',
-  "Côte d'Ivoire":       'Sandy',
+  Ecuador:               'Sandy',
+  'Ivory Coast':         'Sandy',  // API may use "Côte d'Ivoire"
   // Group F — #1+#4 pair (Netherlands, fixed)
   Netherlands:           'Sandy',  // fixed
   Tunisia:               'Sandy',
   // Group G — #2+#3 pair
   Iran:                  'Sandy',
-  Egypt:                 'Rahul',
+  Egypt:                 'Sandy',
   // Group H — #1+#4 pair (Spain)
   Spain:                 'Sandy',
-  'Cabo Verde':          'Sandy',
+  'Cape Verde Islands':  'Sandy',  // API may use "Cape Verde"
   // Group I — #1+#4 pair (France)
   France:                'Sandy',
   Iraq:                  'Sandy',
   // Group J — #2+#3 pair
-  Austria:               'Rahul',
-  Algeria:               'Rahul',
+  Austria:               'Sandy',
+  Algeria:               'Sandy',
   // Group K — #2+#3 pair
   Colombia:              'Sandy',
-  'DR Congo':            'Sandy',
+  'Congo DR':            'Sandy',  // API may use "DR Congo"
   // Group L — #2+#3 pair
   Croatia:               'Sandy',
-  Ghana:                 'Rahul',
+  Ghana:                 'Sandy',
 
   // ── Rahul (24) ──────────────────────────────────────────────────────────
   // Group A — #2+#3 pair
@@ -62,9 +62,8 @@ export const BET_OWNERSHIP: Record<string, BetParticipant> = {
   Morocco:               'Rahul',
   Scotland:              'Rahul',
   // Group D — #1+#4 pair (USA)
-  'United States':       'Rahul',
-  'USA':                 'Rahul',
-  Paraguay:              'Sandy',
+  'United States':       'Rahul',  // API may use "USA"
+  Paraguay:              'Rahul',
   // Group E — #1+#4 pair (Germany)
   Germany:               'Rahul',
   'Curaçao':             'Rahul',
@@ -78,7 +77,7 @@ export const BET_OWNERSHIP: Record<string, BetParticipant> = {
   Uruguay:               'Rahul',
   'Saudi Arabia':        'Rahul',
   // Group I — #2+#3 pair
-  Senegal:               'Sandy',
+  Senegal:               'Rahul',
   Norway:                'Rahul',
   // Group J — #1+#4 pair (Argentina, fixed)
   Argentina:             'Rahul',  // fixed
