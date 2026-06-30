@@ -80,8 +80,8 @@ function OwnerTag({ owner }: { owner: string | undefined }) {
 }
 
 function HistoryRow({ record }: { record: BetMatchRecord }) {
-  const homeBetOwner = record.homeOwner;
-  const awayBetOwner = record.awayOwner;
+  const homeBetOwner = record.homeOwner ?? undefined;
+  const awayBetOwner = record.awayOwner ?? undefined;
   const winnerCrest = record.winner === record.homeTeam ? record.homeCrest : record.awayCrest;
 
   const formattedDate = new Date(record.date).toLocaleDateString('en-GB', {
