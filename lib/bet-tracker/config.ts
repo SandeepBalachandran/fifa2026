@@ -90,6 +90,24 @@ export const BET_OWNERSHIP: Record<string, BetParticipant> = {
   Panama:                'Rahul',
 };
 
+// Ownership overrides for LAST_16 (Round of 32) and beyond.
+// Only lists teams whose owner changed from BET_OWNERSHIP.
+export const R32_OWNERSHIP: Partial<Record<string, BetParticipant>> = {
+  Mexico:      'Rahul',
+  Switzerland: 'Rahul',
+  Austria:     'Rahul',
+  Egypt:       'Rahul',
+  Ghana:       'Rahul',
+  Germany:     'Sandy',
+  Senegal:     'Sandy',
+};
+
+export function getOwnership(teamName: string, stage: string): BetParticipant | undefined {
+  const isKnockout = stage !== 'GROUP_STAGE' && stage !== 'REGULAR_SEASON';
+  if (isKnockout && teamName in R32_OWNERSHIP) return R32_OWNERSHIP[teamName];
+  return BET_OWNERSHIP[teamName];
+}
+
 export function getBetLabel(teamName: string): '(S)' | '(R)' | '' {
   const owner = BET_OWNERSHIP[teamName];
   if (owner === 'Sandy') return '(S)';

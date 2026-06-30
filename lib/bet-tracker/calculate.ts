@@ -1,5 +1,5 @@
 import type { Fixture } from '../football-data/types';
-import { BET_OWNERSHIP, AMOUNT_PER_WIN } from './config';
+import { getOwnership, AMOUNT_PER_WIN } from './config';
 import type { BetMatchRecord, BetStats } from './types';
 
 export interface BetResult {
@@ -23,8 +23,8 @@ export function calculateBetStats(fixtures: Fixture[]): BetResult {
     const { home, away } = f.score.fullTime;
     if (home === null || away === null) continue;
 
-    const homeOwner = BET_OWNERSHIP[f.homeTeam.name] ?? null;
-    const awayOwner = BET_OWNERSHIP[f.awayTeam.name] ?? null;
+    const homeOwner = getOwnership(f.homeTeam.name, f.stage) ?? null;
+    const awayOwner = getOwnership(f.awayTeam.name, f.stage) ?? null;
     if (!homeOwner && !awayOwner) continue;
 
     // Option A: same-owner match → no bet, no points
@@ -53,6 +53,8 @@ export function calculateBetStats(fixtures: Fixture[]): BetResult {
       awayTeam: f.awayTeam.name,
       homeCrest: f.homeTeam.crest,
       awayCrest: f.awayTeam.crest,
+      homeOwner,
+      awayOwner,
       winner,
       winnerOwner,
       amount: winnerOwner ? AMOUNT_PER_WIN : 0,

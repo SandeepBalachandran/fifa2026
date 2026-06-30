@@ -220,7 +220,6 @@ interface LeaderboardShellProps {
   standings: GroupStanding[];
   ownership: Record<string, string>;
   standingsError: string | null;
-  competition: string;
 }
 
 export function LeaderboardShell({
@@ -228,7 +227,6 @@ export function LeaderboardShell({
   standings,
   ownership,
   standingsError,
-  competition,
 }: LeaderboardShellProps) {
   const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
 

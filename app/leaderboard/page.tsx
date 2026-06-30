@@ -10,7 +10,7 @@ export default async function LeaderboardPage({
   searchParams: Promise<{ competition?: string; season?: string }>;
 }) {
   const { competition = 'WC', season } = await searchParams;
-  const seasonYear = season ? parseInt(season, 10) : undefined;
+  const seasonYear = season ? Number.parseInt(season, 10) : undefined;
   const store = readStore();
   const entries = buildLeaderboard(store);
   const { ownership } = store;

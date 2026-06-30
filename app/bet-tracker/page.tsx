@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import { fetchFixtures } from '@/lib/football-data/client';
 import { calculateBetStats } from '@/lib/bet-tracker/calculate';
-import { SANDY_TEAMS, RAHUL_TEAMS, BET_OWNERSHIP, AMOUNT_PER_WIN } from '@/lib/bet-tracker/config';
+import { SANDY_TEAMS, RAHUL_TEAMS, AMOUNT_PER_WIN } from '@/lib/bet-tracker/config';
 import type { BetMatchRecord } from '@/lib/bet-tracker/types';
 
 function Crest({ src, name, size = 20 }: { src: string | null | undefined; name: string; size?: number }) {
@@ -80,8 +80,8 @@ function OwnerTag({ owner }: { owner: string | undefined }) {
 }
 
 function HistoryRow({ record }: { record: BetMatchRecord }) {
-  const homeBetOwner = BET_OWNERSHIP[record.homeTeam];
-  const awayBetOwner = BET_OWNERSHIP[record.awayTeam];
+  const homeBetOwner = record.homeOwner;
+  const awayBetOwner = record.awayOwner;
   const winnerCrest = record.winner === record.homeTeam ? record.homeCrest : record.awayCrest;
 
   const formattedDate = new Date(record.date).toLocaleDateString('en-GB', {
