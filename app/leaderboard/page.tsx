@@ -29,7 +29,6 @@ export default async function LeaderboardPage({
       standings={standings}
       ownership={ownership}
       standingsError={standingsError}
-      competition={competition}
     />
   );
 }
